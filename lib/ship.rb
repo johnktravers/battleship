@@ -1,1 +1,4 @@
-# Ship class
+class Ship
+
+
+end
