@@ -1,1 +1,1 @@
-# Test for ship class
+require './lib/ship'
