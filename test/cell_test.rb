@@ -42,4 +42,54 @@ class CellTest < Minitest::Test
     assert_equal false, @cell.empty?
   end
 
+  def test_it_starts_not_fired_upon
+    assert_equal false, @cell.fired_upon?
+  end
+
+  def test_firing_upon_cell_with_ship_decreases_health
+    @cell.place_ship(@cruiser)
+    @cell.fire_upon
+
+    assert_equal 2, @cell.ship.health
+  end
+
+  def test_fired_upon_is_true_after_firing_on_cell
+    @cell.place_ship(@cruiser)
+    @cell.fire_upon
+
+    assert_equal true, @cell.fired_upon?
+  end
+
+  def test_it_renders_as_dot_if_no_ship
+    assert_equal ".", @cell.render
+  end
+
+  def test_miss_renders_as_M
+    @cell.fire_upon
+
+    assert_equal "M", @cell.render
+  end
+
+  def test_hit_renders_as_H
+    @cell.place_ship(@cruiser)
+    @cell.fire_upon
+
+    assert_equal "H", @cell.render
+  end
+
+  def test_sunk_ship_renders_as_X
+    @cell.place_ship(@cruiser)
+    3.times do
+      @cell.fire_upon
+    end
+
+    assert_equal "X", @cell.render
+  end
+
+  def test_ship_renders_S_with_optional_argument
+    @cell.place_ship(@cruiser)
+
+    assert_equal "S", @cell.render(true)
+  end
+
 end
