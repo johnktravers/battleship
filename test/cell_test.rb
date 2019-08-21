@@ -82,7 +82,14 @@ class CellTest < Minitest::Test
     3.times do
       @cell.fire_upon
     end
-    
+
     assert_equal "X", @cell.render
   end
+
+  def test_ship_renders_S_with_optional_argument
+    @cell.place_ship(@cruiser)
+
+    assert_equal "S", @cell.render(true)
+  end
+
 end

@@ -26,8 +26,10 @@ class Cell
     end
   end
 
-  def render
-    if @fired_upon == false
+  def render(argument = nil)
+    if @fired_upon == false && @ship != nil && argument == true
+      "S"
+    elsif @fired_upon == false
       "."
     elsif @fired_upon == true && @ship == nil
       "M"
