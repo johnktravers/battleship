@@ -26,6 +26,9 @@ class BoardTest < Minitest::Test
               "D3" => Cell.new("D3"),
               "D4" => Cell.new("D4"),
               }
+
+    @cruiser = Ship.new("Cruiser", 3)
+    @submarine = Ship.new("Submarine", 2)
   end
 
   def test_it_exists
@@ -40,4 +43,26 @@ class BoardTest < Minitest::Test
     end
   end
 
+  def test_its_cells_have_valid_coordinates
+    assert_equal true, @board.valid_coordinate?("A1")
+    assert_equal true, @board.valid_coordinate?("D4")
+    assert_equal false, @board.valid_coordinate?("A5")
+    assert_equal false, @board.valid_coordinate?("E1")
+    assert_equal false, @board.valid_coordinate?("A22")
+  end
+
+  def test_valid_ship_placement_based_on_length
+    assert_equal false, @board.valid_placement?(@cruiser, ["A1", "A2"])
+    assert_equal false, @board.valid_placement?(@submarine, ["A2", "A3", "A4"])
+    assert_equal true, @board.valid_placement?(@submarine, ["A3", "A4"])
+  end
+
+  def test_coordinate_validity_for_ship_placement
+    assert_equal false, @board.valid_placement?(@submarine, ["A4", "A5"])
+    assert_equal true, @board.valid_placement?(@cruiser, ["B2", "B3", "B4"])
+  end
+
+  def test_coordinates_are_consecutive
+    assert_equal false, @board.valid_placement?(@cruiser, ["A1", "A2", "A4"])
+  end
 end
