@@ -59,4 +59,30 @@ class CellTest < Minitest::Test
 
     assert_equal true, @cell.fired_upon?
   end
+
+  def test_it_renders_as_dot_if_no_ship
+    assert_equal ".", @cell.render
+  end
+
+  def test_miss_renders_as_M
+    @cell.fire_upon
+
+    assert_equal "M", @cell.render
+  end
+
+  def test_hit_renders_as_H
+    @cell.place_ship(@cruiser)
+    @cell.fire_upon
+
+    assert_equal "H", @cell.render
+  end
+
+  def test_sunk_ship_renders_as_X
+    @cell.place_ship(@cruiser)
+    3.times do
+      @cell.fire_upon
+    end
+    
+    assert_equal "X", @cell.render
+  end
 end
