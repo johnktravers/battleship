@@ -20,5 +20,8 @@ class Ship
       @sunk = true
       @health = 0
     end
+    
+    nil
   end
+
 end
