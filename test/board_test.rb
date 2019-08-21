@@ -29,6 +29,9 @@ class BoardTest < Minitest::Test
 
     @cruiser = Ship.new("Cruiser", 3)
     @submarine = Ship.new("Submarine", 2)
+    @cell_1 = @board.cells["A1"]
+    @cell_2 = @board.cells["A2"]
+    @cell_3 = @board.cells["A2"]
   end
 
   def test_it_exists
@@ -74,5 +77,25 @@ class BoardTest < Minitest::Test
   def test_valid_coordinates_are_indeed_valid
     assert_equal true, @board.valid_placement?(@submarine, ["A1", "A2"])
     assert_equal true, @board.valid_placement?(@cruiser, ["B1", "C1", "D1"])
+  end
+
+  def test_ship_can_be_placed_on_board
+    @board.place(@cruiser, ["A1", "A2", "A3"])
+
+    assert_equal @cruiser, @cell_1.ship
+    assert_equal @cruiser, @cell_2.ship
+    assert_equal @cruiser, @cell_3.ship
+  end
+
+  def test_two_cells_can_have_same_ship
+    @board.place(@cruiser, ["A1", "A2", "A3"])
+
+    assert @cell_3.ship == @cell_2.ship
+  end
+
+  def test_ships_cannot_overlap
+    @board.place(@cruiser, ["A1", "A2", "A3"])
+
+    assert_equal false, @board.valid_placement?(@submarine, ["A1", "B1"])
   end
 end

@@ -58,7 +58,20 @@ class Board
       return false
     end
 
+    array_of_coords.each do |coordinate|
+      if !@cells[coordinate].empty?
+        return false
+      end
+    end
+
     ship.length == array_of_coords.length
   end
 
+  def place(ship, array_of_coords)
+    if valid_placement?(ship, array_of_coords)
+      array_of_coords.each do |coordinate|
+        @cells[coordinate].place_ship(ship)
+      end
+    end
+  end
 end
