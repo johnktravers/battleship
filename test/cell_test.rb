@@ -60,6 +60,17 @@ class CellTest < Minitest::Test
     assert_equal true, @cell.fired_upon?
   end
 
+  def test_it_can_be_fired_upon_only_one_time
+    place_and_fire
+    2.times do
+      @cell.fire_upon
+    end
+
+    assert_equal 2, @cell.ship.health
+    assert_equal true, @cell.fired_upon?
+    assert_equal false, @cell.ship.sunk?
+  end
+
   def test_it_renders_as_dot_if_no_ship
     assert_equal ".", @cell.render
   end
