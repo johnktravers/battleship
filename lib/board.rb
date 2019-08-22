@@ -78,15 +78,31 @@ class Board
   def render
     line_nums = " " + @all_numbers.gsub(//, " ") + "\n"
 
-    array = [".", ".", ".", ".", "\n"]
+    sorted_coords = @cells.keys.sort
 
-    line_A = @all_letters[0] + " " + array.join(" ")
-    line_B = @all_letters[1] + " " + array.join(" ")
-    line_C = @all_letters[2] + " " + array.join(" ")
-    line_D = @all_letters[3] + " " + array.join(" ")
+    render_string = ""
+
+    @all_letters.split("").each do |letter|
+      sorted_coords.each do |coord|
+        if letter == coord[0]
+          render_string.concat(@cells[coord].render)
+        end
+      end
+    end
+
+    array_A = render_string[0..3].split("").push("\n")
+    array_B = render_string[4..7].split("").push("\n")
+    array_C = render_string[8..11].split("").push("\n")
+    array_D = render_string[12..15].split("").push("\n")
+
+    # array = [".", ".", ".", ".", "\n"]
+
+    line_A = @all_letters[0] + " " + array_A.join(" ")
+    line_B = @all_letters[1] + " " + array_B.join(" ")
+    line_C = @all_letters[2] + " " + array_C.join(" ")
+    line_D = @all_letters[3] + " " + array_D.join(" ")
 
     line_nums + line_A + line_B + line_C + line_D
-
 
   end
 
