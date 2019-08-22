@@ -34,42 +34,17 @@ class Board
   end
 
   def valid_placement?(ship, array_of_coords)
-
-    array_of_coords.each do |coordinate|
-      if !valid_coordinate?(coordinate)
-        return false
-      end
-    end
-
-    letters = []
-    numbers = []
-
-    array_of_coords.each do |coordinate|
-      split = coordinate.split("")
-      letters.push(split[0])
-      numbers.push(split[1])
-    end
-
-    # All column arrangements are valid
-    if letters.uniq.length == 1 && @all_numbers.include?(numbers.join)
-      true
-    # All row arrangements are valid
-    elsif numbers.uniq.length == 1 && @all_letters.include?(letters.join)
-      true
+    if !length_matches?(ship, array_of_coords)
+      false
+    elsif !consecutive_coords?(array_of_coords)
+      false
+    elsif !valid_coordinates?(array_of_coords)
+      false
+    elsif !coordinates_empty?(array_of_coords)
+      false
     else
-      return false
+      true
     end
-
-  # elsif not_consecutive_spots?
-  #   return false
-
-    array_of_coords.each do |coordinate|
-      if !@cells[coordinate].empty?
-        return false
-      end
-    end
-
-    ship.length == array_of_coords.length
   end
 
   def place(ship, array_of_coords)
@@ -110,6 +85,52 @@ class Board
 
     line_nums + line_A + line_B + line_C + line_D
 
+  end
+
+  # helper methods
+
+  def length_matches?(ship, array_of_coords)
+    ship.length == array_of_coords.length
+  end
+
+  def consecutive_coords?(array_of_coords)
+    letters = []
+    numbers = []
+
+    array_of_coords.each do |coordinate|
+      split = coordinate.split("")
+      letters.push(split[0])
+      numbers.push(split[1])
+    end
+
+    # All column arrangements are valid
+    if letters.uniq.length == 1 && @all_numbers.include?(numbers.join)
+      true
+    # All row arrangements are valid
+    elsif numbers.uniq.length == 1 && @all_letters.include?(letters.join)
+      true
+    else
+      return false
+    end
+  end
+
+  def valid_coordinates?(array_of_coords)
+    array_of_coords.each do |coordinate|
+      if !valid_coordinate?(coordinate)
+        return false
+      end
+    end
+
+    true
+  end
+
+  def coordinates_empty?(array_of_coords)
+    array_of_coords.each do |coordinate|
+      if !@cells[coordinate].empty?
+        return false
+      end
+    end
+    true
   end
 
 end
