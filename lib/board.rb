@@ -20,6 +20,8 @@ class Board
               "D3" => Cell.new("D3"),
               "D4" => Cell.new("D4"),
               }
+    @all_letters = "ABCD"
+    @all_numbers = "1234"
   end
 
   def valid_coordinate?(coordinate)
@@ -37,8 +39,6 @@ class Board
       end
     end
 
-    all_letters = "ABCD"
-    all_numbers = "1234"
     letters = []
     numbers = []
 
@@ -49,10 +49,10 @@ class Board
     end
 
     # All column arrangements are valid
-    if letters.uniq.length == 1 && all_numbers.include?(numbers.join)
+    if letters.uniq.length == 1 && @all_numbers.include?(numbers.join)
       true
     # All row arrangements are valid
-    elsif numbers.uniq.length == 1 && all_letters.include?(letters.join)
+  elsif numbers.uniq.length == 1 && @all_letters.include?(letters.join)
       true
     else
       return false
@@ -74,4 +74,20 @@ class Board
       end
     end
   end
+
+  def render
+    line_nums = " " + @all_numbers.gsub(//, " ") + "\n"
+
+    array = [".", ".", ".", ".", "\n"]
+
+    line_A = @all_letters[0] + " " + array.join(" ")
+    line_B = @all_letters[1] + " " + array.join(" ")
+    line_C = @all_letters[2] + " " + array.join(" ")
+    line_D = @all_letters[3] + " " + array.join(" ")
+
+    line_nums + line_A + line_B + line_C + line_D
+
+
+  end
+
 end

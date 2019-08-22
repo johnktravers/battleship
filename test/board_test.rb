@@ -3,6 +3,7 @@ require 'minitest/pride'
 require './lib/ship'
 require './lib/cell'
 require './lib/board'
+require 'pry'
 
 class BoardTest < Minitest::Test
 
@@ -98,4 +99,11 @@ class BoardTest < Minitest::Test
 
     assert_equal false, @board.valid_placement?(@submarine, ["A1", "B1"])
   end
+
+  def test_it_renders_as_dots_to_start
+    expected = "  1 2 3 4 \nA . . . . \nB . . . . \nC . . . . \nD . . . . \n"
+
+    assert_equal expected, @board.render
+  end
+
 end
