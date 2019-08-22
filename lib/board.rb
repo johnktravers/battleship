@@ -93,45 +93,6 @@ class Board
     ship.length == array_of_coords.length
   end
 
-  def consecutive_coords?(array_of_coords)
-    get_coordinate_numbers(array_of_coords)
-    get_coordinate_letters(array_of_coords)
-
-    if consecutive_numbers?(array_of_coords) && @coord_letters.uniq.length == 1
-      true
-    elsif consecutive_letters?(array_of_coords) && @coord_numbers.uniq.length == 1
-      true
-    else
-      false
-    end
-  end
-
-  def get_coordinate_numbers(array_of_coords)
-    @coord_numbers = []
-
-    array_of_coords.each do |coordinate|
-      split = coordinate.split("")
-      @coord_numbers.push(split[1])
-    end
-  end
-
-  def get_coordinate_letters(array_of_coords)
-    @coord_letters = []
-
-    array_of_coords.each do |coordinate|
-      split = coordinate.split("")
-      @coord_letters.push(split[0])
-    end
-  end
-
-  def consecutive_numbers?(array_of_coords)
-    @all_numbers.include?(@coord_numbers.join)
-  end
-
-  def consecutive_letters?(array_of_coords)
-    @all_letters.include?(@coord_letters.join)
-  end
-
   def valid_coordinates?(array_of_coords)
     array_of_coords.each do |coordinate|
       if !valid_coordinate?(coordinate)
@@ -140,6 +101,39 @@ class Board
     end
 
     true
+  end
+
+  def consecutive_coords?(array_of_coords)
+    get_coord_numbers(array_of_coords)
+    get_coord_letters(array_of_coords)
+
+    if consecutive_numbers?(array_of_coords) && get_coord_letters(array_of_coords).uniq.length == 1
+      true
+    elsif consecutive_letters?(array_of_coords) && get_coord_numbers(array_of_coords).uniq.length == 1
+      true
+    else
+      false
+    end
+  end
+
+  def get_coord_numbers(array_of_coords)
+    array_of_coords.map do |coordinate|
+      coordinate.split("")[1]
+    end
+  end
+
+  def get_coord_letters(array_of_coords)
+    array_of_coords.map do |coordinate|
+      coordinate.split("")[0]
+    end
+  end
+
+  def consecutive_numbers?(array_of_coords)
+    @all_numbers.include?(get_coord_numbers(array_of_coords).join)
+  end
+
+  def consecutive_letters?(array_of_coords)
+    @all_letters.include?(get_coord_letters(array_of_coords).join)
   end
 
   def coordinates_empty?(array_of_coords)
