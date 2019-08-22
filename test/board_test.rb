@@ -97,4 +97,31 @@ class BoardTest < Minitest::Test
     assert_equal expected, @board.render(true)
   end
 
+  def test_game_play_with_integration_test
+    @board.place(@cruiser, ["C2", "C3", "C4"])
+    @board.place(@submarine, ["C1", "D1"])
+    expected = "  1 2 3 4 \nA . . . . \nB . . . . \nC . . . . \nD . . . . \n"
+    assert_equal expected, @board.render
+
+    @board.cells["A4"].fire_upon
+    expected = "  1 2 3 4 \nA . . . M \nB . . . . \nC . . . . \nD . . . . \n"
+    assert_equal expected, @board.render
+
+    @board.cells["C1"].fire_upon
+    expected = "  1 2 3 4 \nA . . . M \nB . . . . \nC H . . . \nD . . . . \n"
+    assert_equal expected, @board.render
+
+    @board.cells["D1"].fire_upon
+    expected = "  1 2 3 4 \nA . . . M \nB . . . . \nC X . . . \nD X . . . \n"
+    assert_equal expected, @board.render
+
+    @board.cells["C4"].fire_upon
+    expected = "  1 2 3 4 \nA . . . M \nB . . . . \nC X . . H \nD X . . . \n"
+    assert_equal expected, @board.render
+
+    @board.cells["C4"].fire_upon
+    expected = "  1 2 3 4 \nA . . . M \nB . . . . \nC X S S H \nD X . . . \n"
+    assert_equal expected, @board.render(true)
+  end
+
 end
