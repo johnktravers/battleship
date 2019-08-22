@@ -20,6 +20,7 @@ class Cell
   end
 
   def fire_upon
+    # make sure that same cell being hit multiple times does not cause a whole ship to be sunk
     @fired_upon = true
     if @ship != nil
       @ship.hit
