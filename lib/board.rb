@@ -87,31 +87,49 @@ class Board
 
   end
 
-  # helper methods
+  # Helper methods
 
   def length_matches?(ship, array_of_coords)
     ship.length == array_of_coords.length
   end
 
   def consecutive_coords?(array_of_coords)
-    letters = []
-    numbers = []
+    get_coordinate_numbers(array_of_coords)
+    get_coordinate_letters(array_of_coords)
+
+    if consecutive_numbers?(array_of_coords) && @coord_letters.uniq.length == 1
+      true
+    elsif consecutive_letters?(array_of_coords) && @coord_numbers.uniq.length == 1
+      true
+    else
+      false
+    end
+  end
+
+  def get_coordinate_numbers(array_of_coords)
+    @coord_numbers = []
 
     array_of_coords.each do |coordinate|
       split = coordinate.split("")
-      letters.push(split[0])
-      numbers.push(split[1])
+      @coord_numbers.push(split[1])
     end
+  end
 
-    # All column arrangements are valid
-    if letters.uniq.length == 1 && @all_numbers.include?(numbers.join)
-      true
-    # All row arrangements are valid
-    elsif numbers.uniq.length == 1 && @all_letters.include?(letters.join)
-      true
-    else
-      return false
+  def get_coordinate_letters(array_of_coords)
+    @coord_letters = []
+
+    array_of_coords.each do |coordinate|
+      split = coordinate.split("")
+      @coord_letters.push(split[0])
     end
+  end
+
+  def consecutive_numbers?(array_of_coords)
+    @all_numbers.include?(@coord_numbers.join)
+  end
+
+  def consecutive_letters?(array_of_coords)
+    @all_letters.include?(@coord_letters.join)
   end
 
   def valid_coordinates?(array_of_coords)
