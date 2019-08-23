@@ -9,30 +9,13 @@ class BoardTest < Minitest::Test
 
   def setup
     @board = Board.new
-    @cells = {
-              "A1" => Cell.new("A1"),
-              "A2" => Cell.new("A2"),
-              "A3" => Cell.new("A3"),
-              "A4" => Cell.new("A4"),
-              "B1" => Cell.new("B1"),
-              "B2" => Cell.new("B2"),
-              "B3" => Cell.new("B3"),
-              "B4" => Cell.new("B4"),
-              "C1" => Cell.new("C1"),
-              "C2" => Cell.new("C2"),
-              "C3" => Cell.new("C3"),
-              "C4" => Cell.new("C4"),
-              "D1" => Cell.new("D1"),
-              "D2" => Cell.new("D2"),
-              "D3" => Cell.new("D3"),
-              "D4" => Cell.new("D4"),
-              }
 
     @cruiser = Ship.new("Cruiser", 3)
     @submarine = Ship.new("Submarine", 2)
+
     @cell_1 = @board.cells["A1"]
     @cell_2 = @board.cells["A2"]
-    @cell_3 = @board.cells["A2"]
+    @cell_3 = @board.cells["A3"]
   end
 
   def test_it_exists
@@ -48,8 +31,8 @@ class BoardTest < Minitest::Test
   end
 
   def test_its_cells_have_valid_coordinates
-    assert_equal true, @board.valid_coordinate?("A1")
-    assert_equal true, @board.valid_coordinate?("D4")
+    # assert_equal true, @board.valid_coordinate?("A1")
+    # assert_equal true, @board.valid_coordinate?("D4")
     assert_equal false, @board.valid_coordinate?("A5")
     assert_equal false, @board.valid_coordinate?("E1")
     assert_equal false, @board.valid_coordinate?("A22")
@@ -100,10 +83,45 @@ class BoardTest < Minitest::Test
     assert_equal false, @board.valid_placement?(@submarine, ["A1", "B1"])
   end
 
-  def test_it_renders_as_dots_to_start
-    expected = "  1 2 3 4 \nA . . . . \nB . . . . \nC . . . . \nD . . . . \n"
+  def test_it_renders_as_dots_without_ships_revealed
+    @board.place(@cruiser, ["A1", "A2", "A3"])
 
+    expected = "  1 2 3 4 \nA . . . . \nB . . . . \nC . . . . \nD . . . . \n"
     assert_equal expected, @board.render
+  end
+
+  def test_it_renders_as_S_when_cell_has_ship_and_ship_is_revealed
+    @board.place(@cruiser, ["A1", "A2", "A3"])
+
+    expected = "  1 2 3 4 \nA S S S . \nB . . . . \nC . . . . \nD . . . . \n"
+    assert_equal expected, @board.render(true)
+  end
+
+  def test_game_play_with_integration_test
+    @board.place(@cruiser, ["C2", "C3", "C4"])
+    @board.place(@submarine, ["C1", "D1"])
+    expected = "  1 2 3 4 \nA . . . . \nB . . . . \nC . . . . \nD . . . . \n"
+    assert_equal expected, @board.render
+
+    @board.cells["A4"].fire_upon
+    expected = "  1 2 3 4 \nA . . . M \nB . . . . \nC . . . . \nD . . . . \n"
+    assert_equal expected, @board.render
+
+    @board.cells["C1"].fire_upon
+    expected = "  1 2 3 4 \nA . . . M \nB . . . . \nC H . . . \nD . . . . \n"
+    assert_equal expected, @board.render
+
+    @board.cells["D1"].fire_upon
+    expected = "  1 2 3 4 \nA . . . M \nB . . . . \nC X . . . \nD X . . . \n"
+    assert_equal expected, @board.render
+
+    @board.cells["C4"].fire_upon
+    expected = "  1 2 3 4 \nA . . . M \nB . . . . \nC X . . H \nD X . . . \n"
+    assert_equal expected, @board.render
+
+    @board.cells["C4"].fire_upon
+    expected = "  1 2 3 4 \nA . . . M \nB . . . . \nC X S S H \nD X . . . \n"
+    assert_equal expected, @board.render(true)
   end
 
 end

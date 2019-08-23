@@ -25,6 +25,7 @@ class Board
   end
 
   def valid_coordinate?(coordinate)
+    # @cells[coordinate]
     if @cells[coordinate]
       true
     else
@@ -33,6 +34,7 @@ class Board
   end
 
   def valid_placement?(ship, array_of_coords)
+
     array_of_coords.each do |coordinate|
       if !valid_coordinate?(coordinate)
         return false
@@ -52,11 +54,14 @@ class Board
     if letters.uniq.length == 1 && @all_numbers.include?(numbers.join)
       true
     # All row arrangements are valid
-  elsif numbers.uniq.length == 1 && @all_letters.include?(letters.join)
+    elsif numbers.uniq.length == 1 && @all_letters.include?(letters.join)
       true
     else
       return false
     end
+
+  # elsif not_consecutive_spots?
+  #   return false
 
     array_of_coords.each do |coordinate|
       if !@cells[coordinate].empty?
@@ -75,7 +80,7 @@ class Board
     end
   end
 
-  def render
+  def render(reveal_ship = false)
     line_nums = " " + @all_numbers.gsub(//, " ") + "\n"
 
     sorted_coords = @cells.keys.sort
@@ -85,7 +90,7 @@ class Board
     @all_letters.split("").each do |letter|
       sorted_coords.each do |coord|
         if letter == coord[0]
-          render_string.concat(@cells[coord].render)
+          render_string.concat(@cells[coord].render(reveal_ship))
         end
       end
     end
@@ -94,6 +99,7 @@ class Board
     array_B = render_string[4..7].split("").push("\n")
     array_C = render_string[8..11].split("").push("\n")
     array_D = render_string[12..15].split("").push("\n")
+    # explore each_slice(4) method
 
     # array = [".", ".", ".", ".", "\n"]
 
