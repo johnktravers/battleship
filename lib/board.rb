@@ -70,21 +70,18 @@ class Board
       end
     end
 
-    array_A = render_string[0..3].split("").push("\n")
-    array_B = render_string[4..7].split("").push("\n")
-    array_C = render_string[8..11].split("").push("\n")
-    array_D = render_string[12..15].split("").push("\n")
-    # explore each_slice(4) method
+    render_array = []
+    render_string.chars.each_slice(4) { |row| render_array.push(row.push("\n")) }
 
     # array = [".", ".", ".", ".", "\n"]
 
-    line_A = @all_letters[0] + " " + array_A.join(" ")
-    line_B = @all_letters[1] + " " + array_B.join(" ")
-    line_C = @all_letters[2] + " " + array_C.join(" ")
-    line_D = @all_letters[3] + " " + array_D.join(" ")
+    render_rows = []
 
-    line_nums + line_A + line_B + line_C + line_D
+    @all_letters.chars.each_with_index do |letter, index|
+      render_rows.push(letter + " " + render_array[index].join(" "))
+    end
 
+    line_nums + render_rows.join("")
   end
 
   # Helper methods

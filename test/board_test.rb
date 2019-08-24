@@ -122,7 +122,7 @@ class BoardTest < Minitest::Test
   end
 
   def test_it_renders_as_S_when_cell_has_ship_and_ship_is_revealed
-    @board.place(@cruiser, ["A1", "A2", "A3"])
+    @board.place(@cruisser, ["A1", "A2", "A3"])
 
     expected = "  1 2 3 4 \nA S S S . \nB . . . . \nC . . . . \nD . . . . \n"
     assert_equal expected, @board.render(true)
