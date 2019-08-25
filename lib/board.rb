@@ -58,21 +58,10 @@ class Board
   def render(reveal_ship = false)
     line_nums = " " + @all_numbers.gsub(//, " ") + "\n"
 
-    sorted_coords = @cells.keys.sort
-
-    render_string = ""
-
-    @all_letters.split("").each do |letter|
-      sorted_coords.each do |coord|
-        if letter == coord[0]
-          render_string.concat(@cells[coord].render(reveal_ship))
-        end
-      end
-    end
-
     render_array = []
-    render_string.chars.each_slice(4) { |row| render_array.push(row.push("\n")) }
-
+    render_chars(reveal_ship).each_slice(4) do |row|
+      render_array.push(row.push("\n"))
+    end
     # array = [".", ".", ".", ".", "\n"]
 
     render_rows = []
@@ -142,4 +131,18 @@ class Board
     true
   end
 
+  def render_chars(reveal_ship = false)
+    sorted_coords = @cells.keys.sort
+
+    render_chars = []
+
+    @all_letters.split("").each do |letter|
+      sorted_coords.each do |coord|
+        if letter == coord[0]
+          render_chars.push(@cells[coord].render(reveal_ship))
+        end
+      end
+    end
+    render_chars
+  end
 end

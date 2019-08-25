@@ -114,6 +114,17 @@ class BoardTest < Minitest::Test
     assert_equal false, @board.valid_placement?(@submarine, ["A1", "B1"])
   end
 
+  def test_it_can_create_an_array_of_rendered_cells
+    expected = Array.new(16, ".")
+
+    assert_equal expected, @board.render_chars
+
+    @board.place(@cruiser, ["C2", "C3", "C4"])
+    expected[9..11] = ["S", "S", "S"]
+
+    assert_equal expected, @board.render_chars(true)
+  end
+
   def test_it_renders_as_dots_without_ships_revealed
     @board.place(@cruiser, ["A1", "A2", "A3"])
 
@@ -122,7 +133,7 @@ class BoardTest < Minitest::Test
   end
 
   def test_it_renders_as_S_when_cell_has_ship_and_ship_is_revealed
-    @board.place(@cruisser, ["A1", "A2", "A3"])
+    @board.place(@cruiser, ["A1", "A2", "A3"])
 
     expected = "  1 2 3 4 \nA S S S . \nB . . . . \nC . . . . \nD . . . . \n"
     assert_equal expected, @board.render(true)
