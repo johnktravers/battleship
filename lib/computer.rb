@@ -13,7 +13,7 @@ class Computer
 
     random_array = @board.cells.keys.sort.sample(ship.length)
 
-    until @board.consecutive_coords?(random_array)
+    until @board.valid_placement?(ship, random_array)
       random_array = @board.cells.keys.sort.sample(ship.length)
     end
 
