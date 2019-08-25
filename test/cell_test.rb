@@ -33,7 +33,9 @@ class CellTest < Minitest::Test
   end
 
   def test_placed_ship_is_a_ship
-    assert_instance_of Ship, @cruiser
+    @cell.place_ship(@cruiser)
+
+    assert_instance_of Ship, @cell.ship
   end
 
   def test_cell_with_ship_is_not_empty
@@ -47,17 +49,26 @@ class CellTest < Minitest::Test
   end
 
   def test_firing_upon_cell_with_ship_decreases_health
-    @cell.place_ship(@cruiser)
-    @cell.fire_upon
+    place_and_fire
 
     assert_equal 2, @cell.ship.health
   end
 
   def test_fired_upon_is_true_after_firing_on_cell
-    @cell.place_ship(@cruiser)
-    @cell.fire_upon
+    place_and_fire
 
     assert_equal true, @cell.fired_upon?
+  end
+
+  def test_it_can_be_fired_upon_only_one_time
+    place_and_fire
+    2.times do
+      @cell.fire_upon
+    end
+
+    assert_equal 2, @cell.ship.health
+    assert_equal true, @cell.fired_upon?
+    assert_equal false, @cell.ship.sunk?
   end
 
   def test_it_renders_as_dot_if_no_ship
@@ -71,16 +82,15 @@ class CellTest < Minitest::Test
   end
 
   def test_hit_renders_as_H
-    @cell.place_ship(@cruiser)
-    @cell.fire_upon
+    place_and_fire
 
     assert_equal "H", @cell.render
   end
 
   def test_sunk_ship_renders_as_X
-    @cell.place_ship(@cruiser)
-    3.times do
-      @cell.fire_upon
+    place_and_fire
+    2.times do
+      @cruiser.hit
     end
 
     assert_equal "X", @cell.render
@@ -90,6 +100,11 @@ class CellTest < Minitest::Test
     @cell.place_ship(@cruiser)
 
     assert_equal "S", @cell.render(true)
+  end
+
+  def place_and_fire
+    @cell.place_ship(@cruiser)
+    @cell.fire_upon
   end
 
 end
