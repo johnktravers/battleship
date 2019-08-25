@@ -7,9 +7,19 @@ require './lib/computer'
 
 cruiser = Ship.new("Cruiser", 3)
 submarine = Ship.new("Submarine", 2)
-board = Board.new
-player = Player.new(board)
+player_board = Board.new
+computer_board = Board.new
 
+computer = Computer.new(computer_board)
+player = Player.new(player_board)
+
+# Computer setup
+computer.add_ship(cruiser)
+computer.add_ship(submarine)
+computer.place_ships
+computer.prompt_player
+
+# Player setup
 player.add_ship(cruiser)
 player.add_ship(submarine)
 
