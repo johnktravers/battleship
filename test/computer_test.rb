@@ -23,6 +23,16 @@ class ComputerTest < Minitest::Test
     assert_equal @board, @computer.board
   end
 
+  def test_it_starts_with_no_ships
+    assert_equal [], @computer.ships
+  end
+
+  def test_ships_can_be_added
+    add_cruiser_and_submarine
+
+    assert_equal [@cruiser, @submarine], @computer.ships
+  end
+
   def test_it_can_select_a_random_coordinate
     actual = @board.cells.keys.include?(@computer.select_random_coord)
     assert_equal true, actual
@@ -41,5 +51,27 @@ class ComputerTest < Minitest::Test
     assert_equal true, actual
   end
 
+  def test_ships_can_be_placed
+    add_cruiser_and_submarine
+    @computer.place_ships
+
+    assert_equal 5, @computer.board.render(true).count("S")
+  end
+
+  def test_it_prompts_user_to_place_ships
+    add_cruiser_and_submarine
+
+    expected = "I have laid out my ships on the grid.\n" +
+               "You now need to lay out your two ships:\n" +
+               "  The Cruiser is three units long.\n" +
+               "  The Submarine is two units long.\n"
+
+    assert_equal expected, @computer.prompt_player
+  end
+
+  def add_cruiser_and_submarine
+    @computer.add_ship(@cruiser)
+    @computer.add_ship(@submarine)
+  end
 
 end
