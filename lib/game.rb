@@ -4,6 +4,8 @@ class Game
   def initialize(computer_board, player_board)
     @computer_board = computer_board
     @player_board = player_board
+    @player_ships = []
+    @computer_ships = []
   end
 
   def main_menu
@@ -27,5 +29,16 @@ class Game
                     @computer_board.render +
                     "==============PLAYER BOARD==============\n" +
                     @player_board.render(true)
+    display
+  end
+
+  def game_over
+    if @computer_board.render.count("X") == 5 && @player_board.render.count("X") == 5
+      puts "It's a tie!"
+    elsif @player_board.render.count("X") == 5
+      puts "I won!"
+    else
+      puts "You won!"
+    end
   end
 end
