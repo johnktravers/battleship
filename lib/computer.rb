@@ -1,14 +1,20 @@
 class Computer
-  attr_reader :computer_board, :player_board, :ships
+  attr_reader :computer_board, :player_board, :computer_ships, :player_ships
 
   def initialize(computer_board, player_board)
     @computer_board = computer_board
     @player_board = player_board
-    @ships = []
+    @computer_ships = []
+    @player_ships = []
+    @shot_coords = []
   end
 
-  def add_ship(ship)
-    @ships.push(ship)
+  def add_computer_ship(ship)
+    @computer_ships.push(ship)
+  end
+
+  def add_player_ship(ship)
+    @player_ships.push(ship)
   end
 
   def select_random_coord
@@ -25,7 +31,7 @@ class Computer
   end
 
   def place_ships
-    @ships.each do |ship|
+    @computer_ships.each do |ship|
       @computer_board.place(ship, create_random_coord_array(ship))
     end
   end
@@ -34,9 +40,9 @@ class Computer
     nums = { 2 => "two", 3 => "three"}
 
     message = "I have laid out my ships on the grid.\n" +
-              "You now need to lay out your #{nums[@ships.length]} ships:\n"
+              "You now need to lay out your #{nums[@player_ships.length]} ships:\n"
 
-    @ships.each do |ship|
+    @player_ships.each do |ship|
       message.concat("  The #{ship.name} is #{nums[ship.length]} units long.\n")
     end
     print message
@@ -44,8 +50,18 @@ class Computer
   end
 
   def fire_upon_coord
-    coord = select_random_coord
+    coord = nil
+
+    loop do
+      coord = select_random_coord
+      if !@shot_coords.include?(coord)
+        break
+      end
+    end
+
     @player_board.cells[coord].fire_upon
+    @shot_coords.push(coord)
+
     if @player_board.cells[coord].render == "M"
       print "My shot on #{coord} was a miss.\n"
     elsif @player_board.cells[coord].render == "H"

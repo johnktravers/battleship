@@ -9,57 +9,64 @@ require './lib/game'
 class ComputerTest < Minitest::Test
 
   def setup
-    @cruiser = Ship.new("Cruiser", 3)
-    @submarine = Ship.new("Submarine", 2)
-    @board = Board.new
-    @computer = Computer.new(@board)
+    @computer_cruiser = Ship.new("Cruiser", 3)
+    @computer_submarine = Ship.new("Submarine", 2)
+    @player_cruiser = Ship.new("Cruiser", 3)
+    @player_submarine = Ship.new("Submarine", 2)
+
+    @computer_board = Board.new
+    @player_board = Board.new
+    @computer = Computer.new(@computer_board, @player_board)
   end
 
   def test_it_exists
     assert_instance_of Computer, @computer
   end
 
-  def test_it_has_a_board
-    assert_equal @board, @computer.board
+  def test_it_has_computer_and_player_boards
+    assert_equal @computer_board, @computer.computer_board
+    assert_equal @player_board, @computer.player_board
   end
 
   def test_it_starts_with_no_ships
-    assert_equal [], @computer.ships
+    assert_equal [], @computer.computer_ships
+    assert_equal [], @computer.player_ships
   end
 
-  def test_ships_can_be_added
-    add_cruiser_and_submarine
+  def test_computer_ships_can_be_added
+    add_computer_cruiser_and_submarine
 
-    assert_equal [@cruiser, @submarine], @computer.ships
+    assert_equal [@computer_cruiser, @computer_submarine], @computer.computer_ships
   end
 
   def test_it_can_select_a_random_coordinate
-    actual = @board.cells.keys.include?(@computer.select_random_coord)
+    actual = @player_board.cells.keys.include?(@computer.select_random_coord)
     assert_equal true, actual
   end
 
   def test_computer_picks_valid_random_coordinate_array
-    cruiser_coords = @computer.create_random_coord_array(@cruiser)
+    cruiser_coords = @computer.create_random_coord_array(@computer_cruiser)
 
-    actual = @computer.board.valid_placement?(@cruiser, cruiser_coords)
+    actual = @computer.computer_board.valid_placement?(@computer_cruiser, cruiser_coords)
     assert_equal true, actual
 
-    @computer.board.place(@cruiser, cruiser_coords)
-    sub_coords = @computer.create_random_coord_array(@submarine)
+    @computer.computer_board.place(@computer_cruiser, cruiser_coords)
+    sub_coords = @computer.create_random_coord_array(@computer_submarine)
 
-    actual = @computer.board.valid_placement?(@submarine, sub_coords)
+    actual = @computer.computer_board.valid_placement?(@computer_submarine, sub_coords)
     assert_equal true, actual
   end
 
   def test_ships_can_be_placed
-    add_cruiser_and_submarine
+    add_computer_cruiser_and_submarine
     @computer.place_ships
 
-    assert_equal 5, @computer.board.render(true).count("S")
+    assert_equal 5, @computer.computer_board.render(true).count("S")
   end
 
   def test_it_prompts_user_to_place_ships
-    add_cruiser_and_submarine
+    add_computer_cruiser_and_submarine
+    add_player_cruiser_and_submarine
 
     expected = "I have laid out my ships on the grid.\n" +
                "You now need to lay out your two ships:\n" +
@@ -69,9 +76,14 @@ class ComputerTest < Minitest::Test
     assert_equal expected, @computer.prompt_player
   end
 
-  def add_cruiser_and_submarine
-    @computer.add_ship(@cruiser)
-    @computer.add_ship(@submarine)
+  def add_computer_cruiser_and_submarine
+    @computer.add_computer_ship(@computer_cruiser)
+    @computer.add_computer_ship(@computer_submarine)
+  end
+
+  def add_player_cruiser_and_submarine
+    @computer.add_player_ship(@player_cruiser)
+    @computer.add_player_ship(@player_submarine)
   end
 
 end
