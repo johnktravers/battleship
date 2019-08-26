@@ -1,8 +1,9 @@
 class Computer
-  attr_reader :board, :ships
+  attr_reader :computer_board, :player_board, :ships
 
-  def initialize(board)
-    @board = board
+  def initialize(computer_board, player_board)
+    @computer_board = computer_board
+    @player_board = player_board
     @ships = []
   end
 
@@ -11,13 +12,13 @@ class Computer
   end
 
   def select_random_coord
-    @board.cells.keys.sample
+    @player_board.cells.keys.sample
   end
 
   def create_random_coord_array(ship)
     loop do
-      random_array = @board.cells.keys.sample(ship.length)
-      if @board.valid_placement?(ship, random_array)
+      random_array = @computer_board.cells.keys.sample(ship.length)
+      if @computer_board.valid_placement?(ship, random_array)
         break random_array
       end
     end
@@ -25,7 +26,7 @@ class Computer
 
   def place_ships
     @ships.each do |ship|
-      @board.place(ship, create_random_coord_array(ship))
+      @computer_board.place(ship, create_random_coord_array(ship))
     end
   end
 
@@ -40,6 +41,18 @@ class Computer
     end
     print message
     message
+  end
+
+  def fire_upon_coord
+    coord = select_random_coord
+    @player_board.cells[coord].fire_upon
+    if @player_board.cells[coord].render == "M"
+      print "My shot on #{coord} was a miss.\n"
+    elsif @player_board.cells[coord].render == "H"
+      print "My shot on #{coord} was a hit.\n"
+    else
+      print "My shot on #{coord} sunk your #{@player_board.cells[coord].ship.name}!\n"
+    end
   end
 
 end
