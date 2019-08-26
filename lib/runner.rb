@@ -12,6 +12,9 @@ computer_board = Board.new
 
 computer = Computer.new(computer_board)
 player = Player.new(player_board)
+game = Game.new(computer_board, player_board)
+
+game.main_menu
 
 # Computer setup
 computer.add_ship(cruiser)
@@ -24,3 +27,5 @@ player.add_ship(cruiser)
 player.add_ship(submarine)
 
 player.present_board
+
+game.display_boards
