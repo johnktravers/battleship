@@ -90,9 +90,6 @@ class Board
   end
 
   def consecutive_coords?(array_of_coords)
-    get_coord_numbers(array_of_coords)
-    get_coord_letters(array_of_coords)
-
     if consecutive_numbers?(array_of_coords) && get_coord_letters(array_of_coords).uniq.length == 1
       true
     elsif consecutive_letters?(array_of_coords) && get_coord_numbers(array_of_coords).uniq.length == 1
