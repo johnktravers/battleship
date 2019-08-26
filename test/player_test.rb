@@ -9,36 +9,53 @@ require './lib/game'
 class PlayerTest < Minitest::Test
 
   def setup
-    @cruiser = Ship.new("Cruiser", 3)
-    @submarine = Ship.new("Submarine", 2)
-    @board = Board.new
-    @player = Player.new(@board)
+    @computer_cruiser = Ship.new("Cruiser", 3)
+    @computer_submarine = Ship.new("Submarine", 2)
+    @player_cruiser = Ship.new("Cruiser", 3)
+    @player_submarine = Ship.new("Submarine", 2)
+
+    @computer_board = Board.new
+    @player_board = Board.new
+    @player = Player.new(@computer_board, @player_board)
   end
 
   def test_it_exists
     assert_instance_of Player, @player
   end
 
-  def test_it_has_a_board
-    assert_equal @board, @player.board
+  def test_it_has_computer_and_player_boards
+    assert_equal @computer_board, @player.computer_board
+    assert_equal @player_board, @player.player_board
   end
 
   def test_it_starts_with_no_ships
-    assert_equal [], @player.ships
+    assert_equal [], @player.player_ships
+    assert_equal [], @player.computer_ships
   end
 
-  def test_ships_can_be_added
-    @player.add_ship(@cruiser)
-    @player.add_ship(@submarine)
+  def test_player_ships_can_be_added
+    @player.add_player_ship(@player_cruiser)
+    @player.add_player_ship(@player_submarine)
 
-    assert_equal [@cruiser, @submarine], @player.ships
+    assert_equal [@player_cruiser, @player_submarine], @player.player_ships
+
+    # @player.add_ship("Cruiser", 3)
+    # @player.add_ship("Submarine", 2)
+    #
+    # assert_instance_of Ship, @player.player_ships[0]
+    # assert_equal "Cruiser", @player.player_ships[0].name
+    # assert_equal 3, @player.player_ships[0].length
+    #
+    # assert_instance_of Ship, @player.player_ships[1]
+    # assert_equal "Submarine", @player.player_ships[1].name
+    # assert_equal 2, @player.player_ships[1].length
   end
 
-  def test_player_is_presented_rendered_board
-    @player.add_ship(@cruiser)
-    expected = "  1 2 3 4 \nA . . . . \nB . . . . \nC . . . . \nD . . . . \n" +
-               "Enter the squares for the Cruiser (3 spaces):\n> "
-    assert_equal expected, @player.present_board
+  def test_computer_ships_can_be_added
+    @player.add_computer_ship(@computer_cruiser)
+    @player.add_computer_ship(@computer_submarine)
+
+    assert_equal [@computer_cruiser, @computer_submarine], @player.computer_ships
   end
 
 end

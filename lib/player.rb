@@ -1,18 +1,24 @@
 class Player
-  attr_reader :computer_board, :player_board, :ships
+  attr_reader :computer_board, :player_board, :computer_ships, :player_ships
 
   def initialize(computer_board, player_board)
     @computer_board = computer_board
     @player_board = player_board
-    @ships = []
+    @player_ships = []
+    @computer_ships = []
+    @shot_coords = []
   end
 
-  def add_ship(ship)
-    @ships.push(ship)
+  def add_computer_ship(ship)
+    @computer_ships.push(ship)
+  end
+
+  def add_player_ship(ship)
+    @player_ships.push(ship)
   end
 
   def present_board
-    @ships.each do |ship|
+    @player_ships.each do |ship|
       message = "Enter the squares for the #{ship.name} (#{ship.length} spaces):\n> "
       print @player_board.render(true) + message
       coords = gets.chomp.split
@@ -33,9 +39,16 @@ class Player
     coord = gets.chomp
     loop do
       if @computer_board.valid_coordinate?(coord)
-        @computer_board.cells[coord].fire_upon
-        display_result(coord)
-        break
+        if !@shot_coords.include?(coord)
+          @computer_board.cells[coord].fire_upon
+          @shot_coords.push(coord)
+          display_result(coord)
+          break
+        else
+          print "That coordinate has already been fired upon.\n" +
+                "Please enter a different coordinate:\n> "
+          coord = gets.chomp
+        end
       else
         print "Please enter a valid coordinate:\n> "
         coord = gets.chomp
