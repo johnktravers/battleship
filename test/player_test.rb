@@ -59,8 +59,4 @@ class PlayerTest < Minitest::Test
     assert_equal [@computer_cruiser, @computer_submarine], @player.computer_ships
   end
 
-  def test_shot_coords_array_updates_when_firing_upon_a_coord
-
-  end
-
 end
