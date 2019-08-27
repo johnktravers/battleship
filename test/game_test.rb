@@ -19,7 +19,7 @@ class GameTest < Minitest::Test
     # @player_board = Board.new
     # @computer = Computer.new(@computer_board, @player_board)
     # @player = Player.new(@computer_board, @player_board)
-    
+
     @game = Game.new
   end
 
@@ -65,7 +65,15 @@ class GameTest < Minitest::Test
   #   assert_equal expected, @game.display_boards
   # end
 
-  def test_it_displays_game_results
+  def test_shot_coords_array_updates_when_firing_upon_a_coord
+    @computer.fire_upon_coord
+    assert_equal 1, @computer.shot_coords.uniq.length
 
+    @computer.fire_upon_coord
+    assert_equal 2, @computer.shot_coords.uniq.length
+
+    @computer.fire_upon_coord
+    assert_equal 3, @computer.shot_coords.uniq.length
   end
+
 end

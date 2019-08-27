@@ -1,8 +1,6 @@
 class Game
   attr_reader :computer_board,
-              :player_board,
-              :computer_ships,
-              :player_ships
+              :player_board
 
   def initialize
     @computer_board = nil
@@ -10,6 +8,8 @@ class Game
     @total_ships = []
     @ship_attrs = [["Cruiser", 3], ["Submarine", 2]]
     @squares_occupied = 0
+    @computer_shot_coords = []
+    @player_shot_coords = []
   end
 
   def main_menu
@@ -94,6 +94,66 @@ class Game
     @ship_attrs.each do |ship|
       @total_ships.push(Ship.new(ship[0], ship[1]))
     end
+    @total_ships
+  end
+
+  def computer_fire_upon_coord
+    coord = nil
+
+    loop do
+      coord = @computer.select_random_coord
+      if !@computer_shot_coords.include?(coord)
+        break
+      end
+    end
+
+    @player_board.cells[coord].fire_upon
+    @computer_shot_coords.push(coord)
+
+    if @player_board.cells[coord].render == "M"
+      print "My shot on #{coord} was a miss.\n"
+    elsif @player_board.cells[coord].render == "H"
+      print "My shot on #{coord} was a hit.\n"
+    else
+      print "My shot on #{coord} sunk your #{@player_board.cells[coord].ship.name}!\n"
+    end
+
+    print "\n"
+  end
+
+  def player_fire_upon_coord
+    coord = @player.fire_upon_coord
+
+    loop do
+      if @computer_board.valid_coordinate?(coord)
+        if !@player_shot_coords.include?(coord)
+          @computer_board.cells[coord].fire_upon
+          @player_shot_coords.push(coord)
+          system "clear"
+          display_player_result(coord)
+          break
+        else
+          print "That coordinate has already been fired upon.\n" +
+                "Please enter a different coordinate:\n> "
+          coord = gets.chomp.upcase
+          print "\n"
+        end
+      else
+        print "Please enter a valid coordinate:\n> "
+        coord = gets.chomp.upcase
+        print "\n"
+      end
+    end
+  end
+
+  def display_player_result(coord)
+    if @computer_board.cells[coord].render == "M"
+      print "Your shot on #{coord} was a miss.\n"
+    elsif @computer_board.cells[coord].render == "H"
+      print "Your shot on #{coord} was a hit.\n"
+    else
+      print "Your shot on #{coord} sunk my #{@computer_board.cells[coord].ship.name}!\n"
+    end
   end
 
   def display_boards
@@ -122,8 +182,7 @@ class Game
 
   def play
     loop do
-      @ship_attrs = [["Cruiser", 3], ["Submarine", 2]]
-      @total_ships = []
+      initialize
 
       main_menu
       custom_ships
@@ -132,32 +191,30 @@ class Game
       @player_board = Board.new
       @computer_board = Board.new
 
-      computer = Computer.new(@computer_board, @player_board, @total_ships)
+      @computer = Computer.new(@computer_board, @total_ships)
 
-      ships_placed = computer.place_ships
-      p ships_placed
+      ships_placed = @computer.place_ships
 
       @player_ships = []
       ships_placed.each do |ship|
         @player_ships.push(Ship.new(ship.name, ship.length))
       end
 
-      player = Player.new(@computer_board, @player_board, @player_ships)
+      @player = Player.new(@player_board, @player_ships)
 
-      computer.prompt_player
+      @computer.prompt_player
 
-      @player_board = player.present_board
+      @player_board = @player.present_board
 
       @squares_occupied = @player_ships.sum do |ship|
         ship.length
       end
-      p @squares_occupied
 
       until @computer_board.render.count("X") == @squares_occupied || @player_board.render.count("X") == @squares_occupied
         display_boards
 
-        player.fire_upon_coord
-        computer.fire_upon_coord
+        player_fire_upon_coord
+        computer_fire_upon_coord
       end
 
       display_boards

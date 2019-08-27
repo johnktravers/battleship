@@ -1,13 +1,10 @@
 class Player
   attr_reader :player_board,
-              :player_ships,
-              :shot_coords
+              :player_ships
 
-  def initialize(computer_board, player_board, player_ships)
-    @computer_board = computer_board
+  def initialize(player_board, player_ships)
     @player_board = player_board
     @player_ships = player_ships
-    @shot_coords = []
   end
 
   def present_board
@@ -48,38 +45,7 @@ class Player
     coord = gets.chomp.upcase
     print "\n"
 
-    loop do
-      if @computer_board.valid_coordinate?(coord)
-        if !@shot_coords.include?(coord)
-          @computer_board.cells[coord].fire_upon
-          @shot_coords.push(coord)
-          system "clear"
-          display_result(coord)
-          break
-        else
-          print "That coordinate has already been fired upon.\n" +
-                "Please enter a different coordinate:\n> "
-          coord = gets.chomp.upcase
-          print "\n"
-        end
-      else
-        print "Please enter a valid coordinate:\n> "
-        coord = gets.chomp.upcase
-        print "\n"
-      end
-    end
-  end
-
-  # Helper method
-
-  def display_result(coord)
-    if @computer_board.cells[coord].render == "M"
-      print "Your shot on #{coord} was a miss.\n"
-    elsif @computer_board.cells[coord].render == "H"
-      print "Your shot on #{coord} was a hit.\n"
-    else
-      print "Your shot on #{coord} sunk my #{@computer_board.cells[coord].ship.name}!\n"
-    end
+    coord
   end
 
 end

@@ -1,15 +1,11 @@
 class Computer
   attr_reader :computer_board,
-              :player_board,
               :total_ships,
-              :ships_placed,
-              :shot_coords
+              :ships_placed
 
-  def initialize(computer_board, player_board, total_ships)
+  def initialize(computer_board, total_ships)
     @computer_board = computer_board
-    @player_board = player_board
     @total_ships = total_ships
-    @shot_coords = []
     @ships_placed = []
   end
 
@@ -24,14 +20,12 @@ class Computer
       random_array = create_random_row(ship, random_coord)
 
       if @computer_board.valid_placement?(ship, random_array)
-        print "\n"
         break random_array
       end
 
       random_array = create_random_column(ship, random_coord)
 
       if @computer_board.valid_placement?(ship, random_array)
-        print "\n"
         break random_array
       end
 
@@ -50,7 +44,7 @@ class Computer
     random_numbers.each do |number|
       random_array.push(letter + number.to_s)
     end
-    p random_array
+    random_array
   end
 
   def create_random_column(ship, random_coord)
@@ -65,7 +59,7 @@ class Computer
     random_letters.each do |letter|
       random_array.push(letter + number)
     end
-    p random_array
+    random_array
   end
 
   def place_ships
@@ -97,30 +91,6 @@ class Computer
     end
     print message + "\n"
     message
-  end
-
-  def fire_upon_coord
-    coord = nil
-
-    loop do
-      coord = select_random_coord
-      if !@shot_coords.include?(coord)
-        break
-      end
-    end
-
-    @player_board.cells[coord].fire_upon
-    @shot_coords.push(coord)
-
-    if @player_board.cells[coord].render == "M"
-      print "My shot on #{coord} was a miss.\n"
-    elsif @player_board.cells[coord].render == "H"
-      print "My shot on #{coord} was a hit.\n"
-    else
-      print "My shot on #{coord} sunk your #{@player_board.cells[coord].ship.name}!\n"
-    end
-
-    print "\n"
   end
 
 end
