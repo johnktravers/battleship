@@ -25,7 +25,6 @@ class Board
   end
 
   def valid_coordinate?(coordinate)
-    # @cells[coordinate]
     if @cells[coordinate]
       true
     else
@@ -62,10 +61,10 @@ class Board
     render_chars(reveal_ship).each_slice(4) do |row|
       render_array.push(row.push("\n"))
     end
-    # array = [".", ".", ".", ".", "\n"]
+
+    # render_array[0] = [".", ".", ".", ".", "\n"]
 
     render_rows = []
-
     @all_letters.chars.each_with_index do |letter, index|
       render_rows.push(letter + " " + render_array[index].join(" "))
     end
@@ -85,14 +84,10 @@ class Board
         return false
       end
     end
-
     true
   end
 
   def consecutive_coords?(array_of_coords)
-    get_coord_numbers(array_of_coords)
-    get_coord_letters(array_of_coords)
-
     if consecutive_numbers?(array_of_coords) && get_coord_letters(array_of_coords).uniq.length == 1
       true
     elsif consecutive_letters?(array_of_coords) && get_coord_numbers(array_of_coords).uniq.length == 1
@@ -104,13 +99,13 @@ class Board
 
   def get_coord_numbers(array_of_coords)
     array_of_coords.map do |coordinate|
-      coordinate.split("")[1]
+      coordinate[1]
     end
   end
 
   def get_coord_letters(array_of_coords)
     array_of_coords.map do |coordinate|
-      coordinate.split("")[0]
+      coordinate[0]
     end
   end
 
@@ -133,10 +128,9 @@ class Board
 
   def render_chars(reveal_ship = false)
     sorted_coords = @cells.keys.sort
-
     render_chars = []
 
-    @all_letters.split("").each do |letter|
+    @all_letters.chars.each do |letter|
       sorted_coords.each do |coord|
         if letter == coord[0]
           render_chars.push(@cells[coord].render(reveal_ship))
