@@ -28,9 +28,10 @@ class PlayerTest < Minitest::Test
     assert_equal @player_board, @player.player_board
   end
 
-  def test_it_starts_with_no_ships
+  def test_it_starts_with_no_ships_or_shot_coords
     assert_equal [], @player.player_ships
     assert_equal [], @player.computer_ships
+    assert_equal [], @player.shot_coords
   end
 
   def test_player_ships_can_be_added
@@ -56,6 +57,10 @@ class PlayerTest < Minitest::Test
     @player.add_computer_ship(@computer_submarine)
 
     assert_equal [@computer_cruiser, @computer_submarine], @player.computer_ships
+  end
+
+  def test_shot_coords_array_updates_when_firing_upon_a_coord
+
   end
 
 end

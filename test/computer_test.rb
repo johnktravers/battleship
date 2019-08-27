@@ -28,9 +28,10 @@ class ComputerTest < Minitest::Test
     assert_equal @player_board, @computer.player_board
   end
 
-  def test_it_starts_with_no_ships
+  def test_it_starts_with_no_ships_or_shot_coords
     assert_equal [], @computer.computer_ships
     assert_equal [], @computer.player_ships
+    assert_equal [], @computer.shot_coords
   end
 
   def test_computer_ships_can_be_added
@@ -70,10 +71,15 @@ class ComputerTest < Minitest::Test
 
     expected = "I have laid out my ships on the grid.\n" +
                "You now need to lay out your two ships:\n" +
+               "\n" +
                "  The Cruiser is three units long.\n" +
                "  The Submarine is two units long.\n"
 
     assert_equal expected, @computer.prompt_player
+  end
+
+  def test_shot_coords_array_updates_when_firing_upon_a_coord
+
   end
 
   def add_computer_cruiser_and_submarine

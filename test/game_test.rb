@@ -52,8 +52,10 @@ class GameTest < Minitest::Test
 
     expected = "=============COMPUTER BOARD=============\n" +
                "  1 2 3 4 \nA . . . . \nB . . . . \nC . . . . \nD . . . . \n" +
+               "\n" +
                "==============PLAYER BOARD==============\n" +
-               "  1 2 3 4 \nA S S S . \nB . . . . \nC . . S . \nD . . S . \n"
+               "  1 2 3 4 \nA S S S . \nB . . . . \nC . . S . \nD . . S . \n" +
+               "\n"
     assert_equal expected, @game.display_boards
   end
 

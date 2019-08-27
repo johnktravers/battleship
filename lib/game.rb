@@ -9,6 +9,7 @@ class Game
   end
 
   def main_menu
+    system "clear"
     print "Welcome to BATTLESHIP\nEnter p to play. Enter q to quit.\n> "
 
     input = gets.chomp
@@ -22,23 +23,30 @@ class Game
         input = gets.chomp
       end
     end
+    system "clear"
   end
 
   def display_boards
     print display = "=============COMPUTER BOARD=============\n" +
                     @computer_board.render +
+                    "\n" +
                     "==============PLAYER BOARD==============\n" +
-                    @player_board.render(true)
+                    @player_board.render(true) +
+                    "\n"
     display
   end
 
   def game_over
     if @computer_board.render.count("X") == 5 && @player_board.render.count("X") == 5
-      puts "It's a tie!"
+      puts "It's a tie!\n\n"
     elsif @player_board.render.count("X") == 5
-      puts "I won!"
+      puts "I won!\n\n"
     else
-      puts "You won!"
+      puts "You won!\n\n"
     end
+
+    print "Press Enter key to continue:\n> "
+    gets
+    system "clear"
   end
 end
