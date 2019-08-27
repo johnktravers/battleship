@@ -31,6 +31,7 @@ class Player
           coords = gets.chomp.split
         end
       end
+      print "\n"
     end
   end
 
@@ -54,6 +55,7 @@ class Player
         coord = gets.chomp
       end
     end
+    print "\n"
   end
 
   # Helper method
@@ -67,4 +69,5 @@ class Player
       print "Your shot on #{coord} sunk my #{@computer_board.cells[coord].ship.name}!\n"
     end
   end
+
 end
