@@ -23,19 +23,21 @@ game.main_menu
 computer.add_computer_ship(computer_cruiser)
 computer.add_computer_ship(computer_submarine)
 computer.place_ships
+
+computer.add_player_ship(player_cruiser)
+computer.add_player_ship(player_submarine)
 computer.prompt_player
 
 # Player setup
 player.add_player_ship(player_cruiser)
 player.add_player_ship(player_submarine)
 
-player.present_board
-
 # Provide access to opponents' ships
-computer.add_player_ship(player_cruiser)
-computer.add_player_ship(player_submarine)
 player.add_computer_ship(computer_cruiser)
 player.add_computer_ship(computer_submarine)
+
+player.present_board
+
 
 until computer_board.render.count("X") == 5 || player_board.render.count("X") == 5
   game.display_boards
