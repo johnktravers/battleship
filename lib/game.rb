@@ -9,6 +9,7 @@ class Game
     @player_board = nil
     @computer_ships = []
     @player_ships = []
+    @ships = [["Cruiser", 3], ["Submarine", 2]]
   end
 
   def main_menu
@@ -27,6 +28,45 @@ class Game
       end
     end
     system "clear"
+  end
+
+  def customize_fleet
+    system "clear"
+    message = "The board contains these ships:\n\n"
+    @ships.each do |ship|
+      message.concat("  #{ship[0]} – #{ship[1]} units long\n")
+    end
+    print message + "\n"
+  end
+
+  def custom_ships
+    customize_fleet
+    print "Would you like to add an additional ship?\n> "
+    answer = gets.chomp.downcase
+    print "\n"
+
+    loop do
+      if answer == "y" || answer == "yes"
+        system "clear"
+        print "Please provide a ship name and length with the following format: Cruiser, 3\n> "
+        attrs = gets.chomp.split(", ")
+        if attrs.length == 2 && attrs[1].to_i > 0
+          name = attrs[0].capitalize
+          length = attrs[1].to_i
+          @ships.push([name, length])
+          customize_fleet
+          custom_ships
+        end
+
+      elsif answer == "n" || answer == "no"
+require 'pry'; binding.pry
+        exit
+      else
+        print "Please enter either y/yes or n/no:\n> "
+        answer = gets.chomp.downcase
+        print "\n"
+      end
+    end
   end
 
   def display_boards
