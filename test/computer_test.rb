@@ -79,7 +79,14 @@ class ComputerTest < Minitest::Test
   end
 
   def test_shot_coords_array_updates_when_firing_upon_a_coord
+    @computer.fire_upon_coord
+    assert_equal 1, @computer.shot_coords.uniq.length
 
+    @computer.fire_upon_coord
+    assert_equal 2, @computer.shot_coords.uniq.length
+
+    @computer.fire_upon_coord
+    assert_equal 3, @computer.shot_coords.uniq.length
   end
 
   def add_computer_cruiser_and_submarine
