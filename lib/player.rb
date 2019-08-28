@@ -1,24 +1,14 @@
 class Player
-  attr_reader :computer_board,
-              :player_board,
-              :computer_ships,
+  attr_reader :player_board,
               :player_ships,
               :shot_coords
 
-  def initialize(computer_board, player_board)
+  def initialize(computer_board, player_board, computer_ships, player_ships)
     @computer_board = computer_board
     @player_board = player_board
-    @player_ships = []
-    @computer_ships = []
+    @player_ships = player_ships
+    @computer_ships = computer_ships
     @shot_coords = []
-  end
-
-  def add_computer_ship(ship)
-    @computer_ships.push(ship)
-  end
-
-  def add_player_ship(ship)
-    @player_ships.push(ship)
   end
 
   def present_board
@@ -32,6 +22,7 @@ class Player
       loop do
         if @player_board.valid_placement?(ship, coords)
           @player_board.place(ship, coords)
+          system "clear"
           break
         else
           print "Those are invalid coordinates. Please try again:\n> "
