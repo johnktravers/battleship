@@ -5,20 +5,13 @@ class Computer
               :player_ships,
               :shot_coords
 
-  def initialize(computer_board, player_board)
+  def initialize(computer_board, player_board, computer_ships, player_ships)
     @computer_board = computer_board
     @player_board = player_board
-    @computer_ships = []
-    @player_ships = []
+    @computer_ships = computer_ships
+    @player_ships = player_ships
     @shot_coords = []
-  end
-
-  def add_computer_ship(ship)
-    @computer_ships.push(ship)
-  end
-
-  def add_player_ship(ship)
-    @player_ships.push(ship)
+    @ships_placed = []
   end
 
   def select_random_coord
@@ -36,8 +29,14 @@ class Computer
 
   def place_ships
     @computer_ships.each do |ship|
-      @computer_board.place(ship, create_random_coord_array(ship))
+      if create_random_coord_array(ship) != nil
+        @computer_board.place(ship, create_random_coord_array(ship))
+        @ships_placed.push(ship)
+      else
+        break
+      end
     end
+    @ships_placed
   end
 
   def prompt_player
