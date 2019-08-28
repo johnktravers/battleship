@@ -32,9 +32,30 @@ class GameTest < Minitest::Test
     assert_nil @game.player_board
   end
 
-  def test_it_starts_without_computer_and_player_ships
-    assert_equal [], @game.computer_ships
-    assert_equal [], @game.player_ships
+  def test_it_starts_without_any_ships_or_shot_coords
+    assert_equal [], @game.total_ships
+    assert_equal [], @game.computer_shot_coords
+    assert_equal [], @game.player_shot_coords
+  end
+
+  def test_no_cells_are_occupied_by_ships_to_start
+    assert_equal 0, @game.squares_occupied
+  end
+
+  def test_it_starts_with_cruiser_and_submarine_attributes
+    assert_equal [["Cruiser", 3], ["Submarine", 2]], @game.ship_attrs
+  end
+
+  def test_it_can_create_ships
+    assert_equal 2, @game.create_ships.length
+
+    assert_instance_of Ship, @game.create_ships[0]
+    assert_equal "Cruiser", @game.create_ships[0].name
+    assert_equal 3, @game.create_ships[0].length
+
+    assert_instance_of Ship, @game.create_ships[1]
+    assert_equal "Submarine", @game.create_ships[1].name
+    assert_equal 2, @game.create_ships[1].length
   end
 
   # def test_main_menu_display
@@ -64,16 +85,5 @@ class GameTest < Minitest::Test
   #              "\n"
   #   assert_equal expected, @game.display_boards
   # end
-
-  def test_shot_coords_array_updates_when_firing_upon_a_coord
-    @computer.fire_upon_coord
-    assert_equal 1, @computer.shot_coords.uniq.length
-
-    @computer.fire_upon_coord
-    assert_equal 2, @computer.shot_coords.uniq.length
-
-    @computer.fire_upon_coord
-    assert_equal 3, @computer.shot_coords.uniq.length
-  end
 
 end
