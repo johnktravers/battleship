@@ -1,42 +1,77 @@
 class Computer
   attr_reader :computer_board,
-              :player_board,
-              :computer_ships,
-              :player_ships,
-              :shot_coords
+              :total_ships,
+              :ships_placed
 
-  def initialize(computer_board, player_board)
+  def initialize(computer_board, total_ships)
     @computer_board = computer_board
-    @player_board = player_board
-    @computer_ships = []
-    @player_ships = []
-    @shot_coords = []
-  end
-
-  def add_computer_ship(ship)
-    @computer_ships.push(ship)
-  end
-
-  def add_player_ship(ship)
-    @player_ships.push(ship)
+    @total_ships = total_ships
+    @ships_placed = []
   end
 
   def select_random_coord
-    @player_board.cells.keys.sample
+    @computer_board.cells.keys.sample
   end
 
   def create_random_coord_array(ship)
-    loop do
-      random_array = @computer_board.cells.keys.sample(ship.length)
+    100.times do
+      random_coord = select_random_coord
+
+      random_array = create_random_row(ship, random_coord)
+
       if @computer_board.valid_placement?(ship, random_array)
         break random_array
       end
+
+      random_array = create_random_column(ship, random_coord)
+
+      if @computer_board.valid_placement?(ship, random_array)
+        break random_array
+      end
+
     end
   end
 
+  def create_random_row(ship, random_coord)
+    random_array = []
+    letter = random_coord[0]
+    random_numbers = [random_coord[1].to_i]
+
+    until random_numbers.length == ship.length
+      random_numbers.push(random_numbers.last + 1)
+    end
+
+    random_numbers.each do |number|
+      random_array.push(letter + number.to_s)
+    end
+    random_array
+  end
+
+  def create_random_column(ship, random_coord)
+    random_array = []
+    number = random_coord[1]
+    random_letters = [random_coord[0]]
+
+    until random_letters.length == ship.length
+      random_letters.push((random_letters.last.ord + 1).chr)
+    end
+
+    random_letters.each do |letter|
+      random_array.push(letter + number)
+    end
+    random_array
+  end
+
   def place_ships
-    @computer_ships.each do |ship|
-      @computer_board.place(ship, create_random_coord_array(ship))
+    @total_ships.each do |ship|
+      coord_array = create_random_coord_array(ship)
+
+      if coord_array != 100
+        @computer_board.place(ship, coord_array)
+        @ships_placed.push(ship)
+      else
+        return @ships_placed
+      end
     end
   end
 
@@ -49,37 +84,13 @@ class Computer
              19 => "nineteen", 20 => "twenty" }
 
     message = "I have laid out my ships on the grid.\n" +
-              "You now need to lay out your #{nums[@player_ships.length]} ships:\n\n"
+              "You now need to lay out your #{nums[@ships_placed.length]} ships:\n\n"
 
-    @player_ships.each do |ship|
+    @ships_placed.each do |ship|
       message.concat("  The #{ship.name} is #{nums[ship.length]} units long.\n")
     end
     print message + "\n"
     message
-  end
-
-  def fire_upon_coord
-    coord = nil
-
-    loop do
-      coord = select_random_coord
-      if !@shot_coords.include?(coord)
-        break
-      end
-    end
-
-    @player_board.cells[coord].fire_upon
-    @shot_coords.push(coord)
-
-    if @player_board.cells[coord].render == "M"
-      print "My shot on #{coord} was a miss.\n"
-    elsif @player_board.cells[coord].render == "H"
-      print "My shot on #{coord} was a hit.\n"
-    else
-      print "My shot on #{coord} sunk your #{@player_board.cells[coord].ship.name}!\n"
-    end
-
-    print "\n"
   end
 
 end
