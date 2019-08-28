@@ -3,21 +3,29 @@ class Player
               :player_ships,
               :shot_coords
 
-  def initialize(computer_board, player_board, computer_ships, player_ships)
+  def initialize(computer_board, player_board, player_ships)
     @computer_board = computer_board
     @player_board = player_board
     @player_ships = player_ships
-    @computer_ships = computer_ships
     @shot_coords = []
   end
 
   def present_board
     @player_ships.each do |ship|
-      message = "Enter the squares for the #{ship.name} (#{ship.length} spaces):\n> "
+      message = "Enter the squares for the #{ship.name} (#{ship.length} spaces):\n" +
+                "To reorganize your ships, enter r.\n> "
       print @player_board.render(true) + "\n" + message
 
-      coords = gets.chomp.upcase.split
+      answer = gets.chomp
       print "\n"
+
+      if answer.downcase == "r"
+        system "clear"
+        @player_board = Board.new
+        present_board
+      end
+
+      coords = answer.upcase.split
 
       loop do
         if @player_board.valid_placement?(ship, coords)
@@ -32,6 +40,7 @@ class Player
       end
     end
     system "clear"
+    @player_board
   end
 
   def fire_upon_coord

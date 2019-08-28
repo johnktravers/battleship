@@ -7,9 +7,8 @@ class Game
   def initialize
     @computer_board = nil
     @player_board = nil
-    @computer_ships = []
-    @player_ships = []
-    @ships = [["Cruiser", 3], ["Submarine", 2]]
+    @total_ships = []
+    @ship_attrs = [["Cruiser", 3], ["Submarine", 2]]
     @squares_occupied = 0
   end
 
@@ -37,7 +36,7 @@ class Game
   def customize_fleet
     system "clear"
     message = "The board contains these ships:\n\n"
-    @ships.each do |ship|
+    @ship_attrs.each do |ship|
       message.concat("  #{ship[0]} – #{ship[1]} units long\n")
     end
     print message + "\n"
@@ -77,7 +76,7 @@ class Game
 
         name = attrs[0].capitalize
         length = attrs[1].to_i
-        @ships.push([name, length])
+        @ship_attrs.push([name, length])
 
         customize_fleet
         custom_ships
@@ -92,9 +91,8 @@ class Game
   end
 
   def create_ships
-    @ships.each do |ship|
-      @computer_ships.push(Ship.new(ship[0], ship[1]))
-      @player_ships.push(Ship.new(ship[0], ship[1]))
+    @ship_attrs.each do |ship|
+      @total_ships.push(Ship.new(ship[0], ship[1]))
     end
   end
 
@@ -124,7 +122,8 @@ class Game
 
   def play
     loop do
-      @ships = [["Cruiser", 3], ["Submarine", 2]]
+      @ship_attrs = [["Cruiser", 3], ["Submarine", 2]]
+      @total_ships = []
 
       main_menu
       custom_ships
@@ -133,24 +132,26 @@ class Game
       @player_board = Board.new
       @computer_board = Board.new
 
-      computer = Computer.new(@computer_board, @player_board, @computer_ships, @player_ships)
+      computer = Computer.new(@computer_board, @player_board, @total_ships)
 
       ships_placed = computer.place_ships
+      p ships_placed
 
       @player_ships = []
       ships_placed.each do |ship|
         @player_ships.push(Ship.new(ship.name, ship.length))
       end
 
-      player = Player.new(@computer_board, @player_board, ships_placed, @player_ships)
+      player = Player.new(@computer_board, @player_board, @player_ships)
 
       computer.prompt_player
 
-      player.present_board
+      @player_board = player.present_board
 
-      @squares_occupied = @ships.sum do |ship|
-        ship[1]
+      @squares_occupied = @player_ships.sum do |ship|
+        ship.length
       end
+      p @squares_occupied
 
       until @computer_board.render.count("X") == @squares_occupied || @player_board.render.count("X") == @squares_occupied
         display_boards
