@@ -1,12 +1,17 @@
 class Game
   attr_reader :computer_board,
-              :player_board
+              :player_board,
+              :ship_attrs,
+              :total_ships,
+              :squares_occupied,
+              :computer_shot_coords,
+              :player_shot_coords
 
   def initialize
     @computer_board = nil
     @player_board = nil
-    @total_ships = []
     @ship_attrs = [["Cruiser", 3], ["Submarine", 2]]
+    @total_ships = []
     @squares_occupied = 0
     @computer_shot_coords = []
     @player_shot_coords = []
@@ -109,7 +114,10 @@ class Game
 
     @player_board.cells[coord].fire_upon
     @computer_shot_coords.push(coord)
+    display_computer_result(coord)
+  end
 
+  def display_computer_result(coord)
     if @player_board.cells[coord].render == "M"
       print "My shot on #{coord} was a miss.\n"
     elsif @player_board.cells[coord].render == "H"
