@@ -1,31 +1,52 @@
 class Board
-  attr_reader :cells
+  attr_reader :height,
+              :width,
+              :all_letters,
+              :all_numbers,
+              :coords,
+              :cells
 
-  def initialize
-    @cells = {
-              "A1" => Cell.new("A1"),
-              "A2" => Cell.new("A2"),
-              "A3" => Cell.new("A3"),
-              "A4" => Cell.new("A4"),
-              "B1" => Cell.new("B1"),
-              "B2" => Cell.new("B2"),
-              "B3" => Cell.new("B3"),
-              "B4" => Cell.new("B4"),
-              "C1" => Cell.new("C1"),
-              "C2" => Cell.new("C2"),
-              "C3" => Cell.new("C3"),
-              "C4" => Cell.new("C4"),
-              "D1" => Cell.new("D1"),
-              "D2" => Cell.new("D2"),
-              "D3" => Cell.new("D3"),
-              "D4" => Cell.new("D4"),
-              }
-    @all_letters = "ABCD"
-    @all_numbers = "1234"
+  def initialize(height, width)
+    @height = height
+    @width = width
+    @all_letters = ["A"]
+    @all_numbers = [1]
+    @coords = create_coordinates
+    @cells = create_cells
+  end
+
+  def create_coordinates
+    coords = []
+
+    until @all_letters.length == @height
+      @all_letters.push((@all_letters.last.ord + 1).chr)
+    end
+
+    until @all_numbers.length == @width
+      @all_numbers.push(@all_numbers.last + 1)
+    end
+
+    @all_letters.each do |letter|
+      @all_numbers.each do |number|
+        coords.push(letter + number.to_s)
+      end
+    end
+
+    coords
+  end
+
+  def create_cells
+    cells = {}
+
+    create_coordinates.each do |coord|
+      cells[coord] = Cell.new(coord)
+    end
+
+    cells
   end
 
   def valid_coordinate?(coordinate)
-    if @cells[coordinate]
+    if @coords.include?(coordinate)
       true
     else
       false
@@ -55,22 +76,38 @@ class Board
   end
 
   def render(reveal_ship = false)
-    line_nums = " " + @all_numbers.gsub(//, " ") + "\n"
+    if @width > 9
+      space = "  "
+      spaced_nums = @all_numbers.map do |num|
+        if num <= 9
+          " " + num.to_s
+        else
+          num
+        end
+      end
+
+      line_nums = space + spaced_nums.join(" ") + " \n"
+      board_length = line_nums.length
+    else
+      space = " "
+      line_nums = "  " + @all_numbers.join(" ") + " \n"
+    end
 
     render_array = []
-    render_chars(reveal_ship).each_slice(4) do |row|
+    render_chars(reveal_ship).each_slice(@width) do |row|
       render_array.push(row.push("\n"))
     end
 
     # render_array[0] = [".", ".", ".", ".", "\n"]
 
     render_rows = []
-    @all_letters.chars.each_with_index do |letter, index|
-      render_rows.push(letter + " " + render_array[index].join(" "))
+    @all_letters.each_with_index do |letter, index|
+      render_rows.push(letter + space + render_array[index].join(space))
     end
 
     line_nums + render_rows.join("")
   end
+
 
   # Helper methods
 
@@ -110,11 +147,11 @@ class Board
   end
 
   def consecutive_numbers?(array_of_coords)
-    @all_numbers.include?(get_coord_numbers(array_of_coords).join)
+    @all_numbers.join.include?(get_coord_numbers(array_of_coords).join)
   end
 
   def consecutive_letters?(array_of_coords)
-    @all_letters.include?(get_coord_letters(array_of_coords).join)
+    @all_letters.join.include?(get_coord_letters(array_of_coords).join)
   end
 
   def coordinates_empty?(array_of_coords)
@@ -127,10 +164,10 @@ class Board
   end
 
   def render_chars(reveal_ship = false)
-    sorted_coords = @cells.keys.sort
+    sorted_coords = @coords
     render_chars = []
 
-    @all_letters.chars.each do |letter|
+    @all_letters.each do |letter|
       sorted_coords.each do |coord|
         if letter == coord[0]
           render_chars.push(@cells[coord].render(reveal_ship))

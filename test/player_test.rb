@@ -13,7 +13,7 @@ class PlayerTest < Minitest::Test
     @submarine = Ship.new("Submarine", 2)
     @player_ships = [@cruiser, @submarine]
 
-    @player_board = Board.new
+    @player_board = Board.new(4, 4)
     @player = Player.new(@player_board, @player_ships)
   end
 

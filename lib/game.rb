@@ -5,7 +5,9 @@ class Game
               :total_ships,
               :squares_occupied,
               :computer_shot_coords,
-              :player_shot_coords
+              :player_shot_coords,
+              :height,
+              :width
 
   def initialize
     @computer_board = nil
@@ -15,6 +17,8 @@ class Game
     @squares_occupied = 0
     @computer_shot_coords = []
     @player_shot_coords = []
+    @height = 0
+    @width = 0
   end
 
   def main_menu
@@ -36,6 +40,39 @@ class Game
       end
     end
     system "clear"
+  end
+
+  def get_board_height
+    system "clear"
+    print "Please enter an integer for the height of the board:\n> "
+    @height = gets.chomp.to_i
+    print "\n"
+
+    loop do
+      if @height > 0 && @height <= 26
+        break
+      else
+        print "Please enter an integer between 1 and 26:\n> "
+        @height = gets.chomp.to_i
+        print "\n"
+      end
+    end
+  end
+
+  def get_board_width
+    print "Now enter an integer for the width of the board:\n> "
+    @width = gets.chomp.to_i
+    print "\n"
+
+    loop do
+      if @width > 0 && @width <= 26
+        break
+      else
+        print "Please enter an integer between 1 and 26:\n> "
+        @width = gets.chomp.to_i
+        print "\n"
+      end
+    end
   end
 
   def customize_fleet
@@ -70,8 +107,8 @@ class Game
             attrs = gets.chomp.split(", ")
             print "\n"
 
-          elsif attrs[1].to_i <= 0 || attrs[1].to_i > 4
-            print "Please try again with a valid length (1 - 4):\n> "
+          elsif attrs[1].to_i <= 0 || attrs[1].to_i > longest_side
+            print "Please try again with a valid length (1 - #{longest_side}):\n> "
             attrs = gets.chomp.split(", ")
             print "\n"
           else
@@ -165,19 +202,20 @@ class Game
   end
 
   def display_boards
-    print display = "=============COMPUTER BOARD=============\n" +
-                    @computer_board.render +
-                    "\n" +
-                    "==============PLAYER BOARD==============\n" +
-                    @player_board.render(true) +
-                    "\n"
-    display
+    num_equal_signs = [(@computer_board.render.length / (@height + 1) - 14) / 2 - 1, 13].max
+
+    print ("=" * num_equal_signs) + "COMPUTER BOARD" + ("=" * num_equal_signs) + "\n" +
+          @computer_board.render +
+          "\n" +
+          ("=" * num_equal_signs) + "=PLAYER BOARD=" + ("=" * num_equal_signs) + "\n" +
+          @player_board.render(true) +
+          "\n"
   end
 
   def game_over
-    if @computer_board.render.count("X") == @squares_occupied && @player_board.render.count("X") == @squares_occupied
+    if computer_ships_sunk? && player_ships_sunk?
       puts "It's a tie!\n\n"
-    elsif @player_board.render.count("X") == @squares_occupied
+    elsif player_ships_sunk?
       puts "I won!\n\n"
     else
       puts "You won!\n\n"
@@ -193,32 +231,32 @@ class Game
       initialize
 
       main_menu
+      get_board_height
+      get_board_width
+
       custom_ships
       create_ships
 
-      @player_board = Board.new
-      @computer_board = Board.new
+      @player_board = Board.new(@height, @width)
+      @computer_board = Board.new(@height, @width)
 
       @computer = Computer.new(@computer_board, @total_ships)
 
-      ships_placed = @computer.place_ships
+      @ships_placed = @computer.place_ships
 
       @player_ships = []
-      ships_placed.each do |ship|
+      @ships_placed.each do |ship|
         @player_ships.push(Ship.new(ship.name, ship.length))
       end
 
       @player = Player.new(@player_board, @player_ships)
-
-      @computer.prompt_player
-
-      @player_board = @player.present_board
+      @player.present_board
 
       @squares_occupied = @player_ships.sum do |ship|
         ship.length
       end
 
-      until @computer_board.render.count("X") == @squares_occupied || @player_board.render.count("X") == @squares_occupied
+      until computer_ships_sunk? || player_ships_sunk?
         display_boards
 
         player_fire_upon_coord
@@ -226,10 +264,27 @@ class Game
       end
 
       display_boards
-
       game_over
     end
   end
 
+
+  # Helper methods
+
+  def computer_ships_sunk?
+    @computer_board.render.count("X") == @squares_occupied
+  end
+
+  def player_ships_sunk?
+    @player_board.render.count("X") == @squares_occupied
+  end
+
+  def longest_side
+    if @height > @width
+      @height
+    else
+      @width
+    end
+  end
 
 end
