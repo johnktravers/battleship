@@ -8,7 +8,7 @@ require 'pry'
 class BoardTest < Minitest::Test
 
   def setup
-    @board = Board.new
+    @board = Board.new(4, 4)
 
     @cruiser = Ship.new("Cruiser", 3)
     @submarine = Ship.new("Submarine", 2)
@@ -22,10 +22,25 @@ class BoardTest < Minitest::Test
     assert_instance_of Board, @board
   end
 
+  def test_it_has_attributes
+    assert_equal 4, @board.height
+    assert_equal 4, @board.width
+    assert_equal ["A", "B", "C", "D"], @board.all_letters
+    assert_equal [1, 2, 3, 4], @board.all_numbers
+  end
+
+  def test_it_has_coordinates
+    expected = ["A1", "A2", "A3", "A4",
+                "B1", "B2", "B3", "B4",
+                "C1", "C2", "C3", "C4",
+                "D1", "D2", "D3", "D4"]
+    assert_equal expected, @board.coords
+  end
+
   def test_it_has_cells
     assert_equal 16, @board.cells.length
 
-    @board.cells.each do |coordinate, cell|
+    @board.cells.each_value do |cell|
       assert_instance_of Cell, cell
     end
   end
@@ -165,6 +180,19 @@ class BoardTest < Minitest::Test
     @board.cells["C4"].fire_upon
     expected = "  1 2 3 4 \nA . . . M \nB . . . . \nC X S S H \nD X . . . \n"
     assert_equal expected, @board.render(true)
+  end
+
+  def test_it_can_be_bigger_than_4x4
+    board = Board.new(26, 26)
+
+    assert_equal 676, board.cells.count
+  end
+
+  def test_it_can_be_smaller_than_4x4
+    board = Board.new(1, 1)
+
+    assert_equal 1, board.cells.count
+    assert_instance_of Cell, board.cells["A1"]
   end
 
 end
