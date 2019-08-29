@@ -25,7 +25,7 @@ class Game
     system "clear"
     print "Welcome to BATTLESHIP\nEnter p to play. Enter q to quit.\n> "
 
-    input = gets.chomp
+    input = gets.chomp.downcase
     print "\n"
 
     loop do
@@ -35,7 +35,7 @@ class Game
         abort
       else
         print "Please enter either p or q to continue.\n> "
-        input = gets.chomp
+        input = gets.chomp.downcase
         print "\n"
       end
     end
@@ -44,7 +44,7 @@ class Game
 
   def get_board_height
     system "clear"
-    print "Please enter an integer for the height of the board:\n> "
+    print "Please enter an integer between 1 and 26 for the height of the board:\n> "
     @height = gets.chomp.to_i
     print "\n"
 
@@ -59,7 +59,7 @@ class Game
     end
   end
 
-  def get_board_width
+  def get_board_width(side_name)
     print "Now enter an integer for the width of the board:\n> "
     @width = gets.chomp.to_i
     print "\n"
@@ -95,6 +95,8 @@ class Game
         system "clear"
         break
 
+        # prompt twice ()
+        #strip method
       elsif answer == "y" || answer == "yes"
         system "clear"
         print "Please provide a ship name and length with the following format: Cruiser, 3\n> "
@@ -260,6 +262,7 @@ class Game
         display_boards
 
         player_fire_upon_coord
+        # check if game is over
         computer_fire_upon_coord
       end
 

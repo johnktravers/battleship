@@ -66,10 +66,11 @@ class CellTest < Minitest::Test
       @cell.fire_upon
     end
 
-    assert_equal 2, @cell.ship.health
+    assert_equal @cruiser.length - 1, @cell.ship.health
     assert_equal true, @cell.fired_upon?
-    assert_equal false, @cell.ship.sunk?
+    # assert_equal false, @cell.ship.sunk?
   end
+  # Single
 
   def test_it_renders_as_dot_if_no_ship
     assert_equal ".", @cell.render
@@ -93,6 +94,7 @@ class CellTest < Minitest::Test
       @cruiser.hit
     end
 
+    assert_equal "X", @cell.render(true)
     assert_equal "X", @cell.render
   end
 

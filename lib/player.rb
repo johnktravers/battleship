@@ -22,19 +22,18 @@ class Player
     @player_ships.each do |ship|
       message.concat("  The #{ship.name} is #{@nums[ship.length]} units long.\n")
     end
-    print message + "\n"
+    message + "\n"
   end
 
   def present_board
     @player_ships.each do |ship|
-      prompt_player
+      print prompt_player
 
       message = "Enter the squares for the #{ship.name} (#{ship.length} spaces):\n> "
       print @player_board.render(true) + "\n" + message
 
-      answer = gets.chomp
+      coords = gets.chomp.upcase.split
       print "\n"
-      coords = answer.upcase.split
 
       loop do
         if @player_board.valid_placement?(ship, coords)

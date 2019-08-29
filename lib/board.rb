@@ -3,7 +3,7 @@ class Board
               :width,
               :all_letters,
               :all_numbers,
-              :coords,
+            #  :coords,
               :cells
 
   def initialize(height, width)

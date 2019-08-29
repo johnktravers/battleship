@@ -53,4 +53,6 @@ class GameTest < Minitest::Test
     assert_equal 2, @game.create_ships[1].length
   end
 
+  # test helper methods
+
 end
