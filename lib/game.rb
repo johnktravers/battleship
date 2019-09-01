@@ -6,132 +6,69 @@ class Game
               :squares_occupied,
               :computer_shot_coords,
               :player_shot_coords,
-              :height,
-              :width
+              :dimensions,
+              :longest_side
 
   def initialize
     @computer_board = nil
     @player_board = nil
     @ship_attrs = [["Cruiser", 3], ["Submarine", 2]]
     @total_ships = []
-    @squares_occupied = 0
     @computer_shot_coords = []
     @player_shot_coords = []
-    @height = 0
-    @width = 0
+    @dimensions = []
   end
 
-  def main_menu
-    system "clear"
-    print "Welcome to BATTLESHIP\nEnter p to play. Enter q to quit.\n> "
-
-    input = gets.chomp.downcase
-    print "\n"
-
-    loop do
-      if input == "p"
-        break
-      elsif input == "q"
-        abort
-      else
-        print "Please enter either p or q to continue.\n> "
-        input = gets.chomp.downcase
-        print "\n"
-      end
-    end
-    system "clear"
+  def main_menu_prompt
+    "Welcome to BATTLESHIP\nEnter p to play. Enter q to quit.\n> "
   end
 
-  def get_board_height
-    system "clear"
-    print "Please enter an integer between 1 and 26 for the height of the board:\n> "
-    @height = gets.chomp.to_i
-    print "\n"
-
-    loop do
-      if @height > 0 && @height <= 26
-        break
-      else
-        print "Please enter an integer between 1 and 26:\n> "
-        @height = gets.chomp.to_i
-        print "\n"
-      end
-    end
+  def enter_p_or_q
+    "Please enter either p or q to continue.\n> "
   end
 
-  def get_board_width(side_name)
-    print "Now enter an integer for the width of the board:\n> "
-    @width = gets.chomp.to_i
-    print "\n"
-
-    loop do
-      if @width > 0 && @width <= 26
-        break
-      else
-        print "Please enter an integer between 1 and 26:\n> "
-        @width = gets.chomp.to_i
-        print "\n"
-      end
-    end
+  def prompt_board_dimension(dimension)
+    "Please enter an integer between 1 and 26 for the #{dimension} of the board:\n> "
   end
 
-  def customize_fleet
-    system "clear"
+  def enter_valid_dimension
+    "Please enter an integer between 1 and 26:\n> "
+  end
+
+  def add_board_dimension(dimension)
+    @dimensions.push(dimension)
+  end
+
+  def list_current_ships
     message = "The board contains these ships:\n\n"
     @ship_attrs.each do |ship|
-      message.concat("  #{ship[0]} – #{ship[1]} units long\n")
+      message.concat("  #{ship[0]} - #{ship[1]} units long\n")
     end
-    print message + "\n"
+    message + "\n"
   end
 
-  def custom_ships
-    customize_fleet
-    print "Would you like to add an additional ship?\n> "
-    answer = gets.chomp.downcase
-    print "\n"
+  def prompt_custom_ships
+    "Would you like to add an additional ship?\n> "
+  end
 
-    loop do
-      if answer == "n" || answer == "no"
-        system "clear"
-        break
+  def enter_yes_or_no
+    "Please enter either y(es) or n(o):\n> "
+  end
 
-        # prompt twice ()
-        #strip method
-      elsif answer == "y" || answer == "yes"
-        system "clear"
-        print "Please provide a ship name and length with the following format: Cruiser, 3\n> "
-        attrs = gets.chomp.split(", ")
-        print "\n"
+  def prompt_ship_name
+    "Please provide a ship name:\n> "
+  end
 
-        loop do
-          if attrs.length != 2
-            print "Please enter the name and length in the format: Cruiser, 3\n> "
-            attrs = gets.chomp.split(", ")
-            print "\n"
+  def prompt_ship_length(longest_side)
+    "Please provide an integer for the ship's length between 1 and #{longest_side}:\n> "
+  end
 
-          elsif attrs[1].to_i <= 0 || attrs[1].to_i > longest_side
-            print "Please try again with a valid length (1 - #{longest_side}):\n> "
-            attrs = gets.chomp.split(", ")
-            print "\n"
-          else
-            break
-          end
-        end
+  def enter_valid_ship_length(longest_side)
+    "Please try again with a valid length (1 - #{longest_side}):\n> "
+  end
 
-        name = attrs[0].capitalize
-        length = attrs[1].to_i
-        @ship_attrs.push([name, length])
-
-        customize_fleet
-        custom_ships
-        break
-
-      else
-        print "Please enter either y/yes or n/no:\n> "
-        answer = gets.chomp.downcase
-        print "\n"
-      end
-    end
+  def add_custom_ship(name, length)
+    @ship_attrs.push([name.capitalize, length])
   end
 
   def create_ships
@@ -141,9 +78,51 @@ class Game
     @total_ships
   end
 
-  def computer_fire_upon_coord
-    coord = nil
+  def add_boards(computer_board, player_board)
+    @computer_board = computer_board
+    @player_board = player_board
+  end
 
+  def prompt_ship_placement(player_ships)
+    message = "I have laid out my ships on the grid.\n" +
+              "You now need to lay out your #{player_ships.length.to_words} ships:\n\n"
+
+    player_ships.each do |ship|
+      message.concat("  The #{ship.name} is #{ship.length.to_words} units long.\n")
+    end
+    message + "\n"
+  end
+
+  def prompt_squares_for_ship(ship)
+    message = "Enter the squares for the #{ship.name} (#{ship.length} spaces):\n> "
+    @player_board.render(true) + "\n" + message
+  end
+
+  def invalid_placement
+    "Those are invalid coordinates. Please try again:\n> "
+  end
+
+
+  def display_boards
+    num_equal_signs = [(@computer_board.render.length / (@dimensions[0] + 1) - 14) / 2 - 1, 13].max
+
+    ("=" * num_equal_signs) + "COMPUTER BOARD" + ("=" * num_equal_signs) + "\n" +
+    @computer_board.render +
+    "\n" +
+    ("=" * num_equal_signs) + "=PLAYER BOARD=" + ("=" * num_equal_signs) + "\n" +
+    @player_board.render(true) +
+    "\n"
+  end
+
+
+
+
+
+
+
+
+
+  def computer_fire_upon_coord
     loop do
       coord = @computer.select_random_coord
       if !@computer_shot_coords.include?(coord)
@@ -168,7 +147,7 @@ class Game
     print "\n"
   end
 
-  def player_fire_upon_coord
+  def prompt_player_shot
     coord = @player.fire_upon_coord
 
     loop do
@@ -203,21 +182,11 @@ class Game
     end
   end
 
-  def display_boards
-    num_equal_signs = [(@computer_board.render.length / (@height + 1) - 14) / 2 - 1, 13].max
 
-    print ("=" * num_equal_signs) + "COMPUTER BOARD" + ("=" * num_equal_signs) + "\n" +
-          @computer_board.render +
-          "\n" +
-          ("=" * num_equal_signs) + "=PLAYER BOARD=" + ("=" * num_equal_signs) + "\n" +
-          @player_board.render(true) +
-          "\n"
-  end
-
-  def game_over
-    if computer_ships_sunk? && player_ships_sunk?
+  def game_over(squares_occupied)
+    if computer_ships_sunk?(squares_occupied) && player_ships_sunk?(squares_occupied)
       puts "It's a tie!\n\n"
-    elsif player_ships_sunk?
+    elsif player_ships_sunk?(squares_occupied)
       puts "I won!\n\n"
     else
       puts "You won!\n\n"
@@ -228,66 +197,19 @@ class Game
     system "clear"
   end
 
-  def play
-    loop do
-      initialize
-
-      main_menu
-      get_board_height
-      get_board_width
-
-      custom_ships
-      create_ships
-
-      @player_board = Board.new(@height, @width)
-      @computer_board = Board.new(@height, @width)
-
-      @computer = Computer.new(@computer_board, @total_ships)
-
-      @ships_placed = @computer.place_ships
-
-      @player_ships = []
-      @ships_placed.each do |ship|
-        @player_ships.push(Ship.new(ship.name, ship.length))
-      end
-
-      @player = Player.new(@player_board, @player_ships)
-      @player.present_board
-
-      @squares_occupied = @player_ships.sum do |ship|
-        ship.length
-      end
-
-      until computer_ships_sunk? || player_ships_sunk?
-        display_boards
-
-        player_fire_upon_coord
-        # check if game is over
-        computer_fire_upon_coord
-      end
-
-      display_boards
-      game_over
-    end
-  end
-
 
   # Helper methods
 
-  def computer_ships_sunk?
-    @computer_board.render.count("X") == @squares_occupied
+  def computer_ships_sunk?(squares_occupied)
+    @computer_board.render.count("X") == squares_occupied
   end
 
-  def player_ships_sunk?
-    @player_board.render.count("X") == @squares_occupied
+  def player_ships_sunk?(squares_occupied)
+    @player_board.render.count("X") == squares_occupied
   end
 
   def longest_side
-    if @height > @width
-      @height
-    else
-      @width
-    end
+    @dimensions.max
   end
 
 end

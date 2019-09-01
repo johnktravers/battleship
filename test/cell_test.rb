@@ -14,15 +14,13 @@ class CellTest < Minitest::Test
     assert_instance_of Cell, @cell
   end
 
-  def test_cell_has_a_coordinate
+  def test_initialize
     assert_equal 'B4', @cell.coordinate
-  end
-
-  def test_cell_starts_without_a_ship
     assert_nil @cell.ship
+    assert_equal false, @cell.fired_upon?
   end
 
-  def test_cell_starts_empty
+  def test_it_starts_empty
     assert_equal true, @cell.empty?
   end
 
@@ -30,22 +28,7 @@ class CellTest < Minitest::Test
     @cell.place_ship(@cruiser)
 
     assert_equal @cruiser, @cell.ship
-  end
-
-  def test_placed_ship_is_a_ship
-    @cell.place_ship(@cruiser)
-
-    assert_instance_of Ship, @cell.ship
-  end
-
-  def test_cell_with_ship_is_not_empty
-    @cell.place_ship(@cruiser)
-
     assert_equal false, @cell.empty?
-  end
-
-  def test_it_starts_not_fired_upon
-    assert_equal false, @cell.fired_upon?
   end
 
   def test_firing_upon_cell_with_ship_decreases_health
@@ -68,41 +51,37 @@ class CellTest < Minitest::Test
 
     assert_equal @cruiser.length - 1, @cell.ship.health
     assert_equal true, @cell.fired_upon?
-    # assert_equal false, @cell.ship.sunk?
   end
-  # Single
 
-  def test_it_renders_as_dot_if_no_ship
+  def test_it_renders_correctly_without_ship
     assert_equal ".", @cell.render
-  end
 
-  def test_miss_renders_as_M
     @cell.fire_upon
 
     assert_equal "M", @cell.render
+    assert_equal "M", @cell.render(true)
   end
 
-  def test_hit_renders_as_H
-    place_and_fire
+  def test_it_renders_correctly_with_ship
+    @cell.place_ship(@cruiser)
+
+    assert_equal "S", @cell.render(true)
+
+    @cell.fire_upon
 
     assert_equal "H", @cell.render
-  end
+    assert_equal "H", @cell.render(true)
 
-  def test_sunk_ship_renders_as_X
-    place_and_fire
     2.times do
       @cruiser.hit
     end
 
-    assert_equal "X", @cell.render(true)
     assert_equal "X", @cell.render
+    assert_equal "X", @cell.render(true)
   end
 
-  def test_ship_renders_S_with_optional_argument
-    @cell.place_ship(@cruiser)
 
-    assert_equal "S", @cell.render(true)
-  end
+  # Helper methods
 
   def place_and_fire
     @cell.place_ship(@cruiser)

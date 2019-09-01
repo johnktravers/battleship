@@ -3,7 +3,6 @@ class Board
               :width,
               :all_letters,
               :all_numbers,
-            #  :coords,
               :cells
 
   def initialize(height, width)
@@ -38,7 +37,7 @@ class Board
   def create_cells
     cells = {}
 
-    create_coordinates.each do |coord|
+    @coords.each do |coord|
       cells[coord] = Cell.new(coord)
     end
 
@@ -97,8 +96,6 @@ class Board
     render_chars(reveal_ship).each_slice(@width) do |row|
       render_array.push(row.push("\n"))
     end
-
-    # render_array[0] = [".", ".", ".", ".", "\n"]
 
     render_rows = []
     @all_letters.each_with_index do |letter, index|
@@ -176,4 +173,5 @@ class Board
     end
     render_chars
   end
+
 end
