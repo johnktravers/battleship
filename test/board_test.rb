@@ -3,7 +3,6 @@ require 'minitest/pride'
 require './lib/ship'
 require './lib/cell'
 require './lib/board'
-require 'pry'
 
 class BoardTest < Minitest::Test
 
@@ -34,7 +33,7 @@ class BoardTest < Minitest::Test
                 "B1", "B2", "B3", "B4",
                 "C1", "C2", "C3", "C4",
                 "D1", "D2", "D3", "D4"]
-    assert_equal expected, @board.coords
+    assert_equal expected, @board.cells.keys.sort
   end
 
   def test_it_has_cells
@@ -57,21 +56,27 @@ class BoardTest < Minitest::Test
     assert_equal false, @board.length_matches?(@cruiser, ["A1", "A2"])
     assert_equal false, @board.length_matches?(@submarine, ["A2", "A3", "A4"])
     assert_equal true, @board.length_matches?(@submarine, ["A3", "A4"])
+    assert_equal true, @board.length_matches?(@submarine, ["A3", "D4"])
   end
 
   def test_all_coordinates_in_arrary_are_valid
     assert_equal false, @board.valid_coordinates?(["A4", "A5"])
+    assert_equal false, @board.valid_coordinates?(["D4", "E4"])
     assert_equal true, @board.valid_coordinates?(["B2", "B3", "B4"])
+    assert_equal true, @board.valid_coordinates?(["A2", "B2", "C2"])
+    assert_equal true, @board.valid_coordinates?(["A2", "D4", "B1"])
   end
 
   def test_coordinate_numbers_can_be_extracted_into_an_array
     assert_equal ["1", "1", "1"], @board.get_coord_numbers(["B1", "C1", "D1"])
     assert_equal ["2", "3", "4"], @board.get_coord_numbers(["D2", "D3", "D4"])
+    assert_equal ["1", "3", "4"], @board.get_coord_numbers(["A1", "C3", "D4"])
   end
 
   def test_coordinate_letters_can_be_extracted_into_an_array
     assert_equal ["C", "C", "C"], @board.get_coord_letters(["C1", "C2", "C3"])
     assert_equal ["B", "C", "D"], @board.get_coord_letters(["B3", "C3", "D3"])
+    assert_equal ["D", "A", "C"], @board.get_coord_letters(["D3", "A2", "C4"])
   end
 
   def test_it_can_determine_if_coordinate_numbers_are_consecutive
@@ -86,7 +91,9 @@ class BoardTest < Minitest::Test
 
   def test_coordinates_are_consecutive
     assert_equal false, @board.consecutive_coords?(["A1", "A2", "A4"])
-    assert_equal true, @board.consecutive_coords?(["C2", "D2"])
+    assert_equal false, @board.consecutive_coords?(["A1", "B1", "D1"])
+    assert_equal true, @board.consecutive_coords?(["B2", "C2", "D2"])
+    assert_equal true, @board.consecutive_coords?(["C2", "C3"])
   end
 
   def test_coordinates_cannot_be_diagonal
@@ -118,12 +125,6 @@ class BoardTest < Minitest::Test
     assert_equal @cruiser, @cell_3.ship
   end
 
-  def test_two_cells_can_have_same_ship
-    @board.place(@cruiser, ["A1", "A2", "A3"])
-
-    assert @cell_3.ship == @cell_2.ship
-  end
-
   def test_ships_cannot_overlap
     @board.place(@cruiser, ["A1", "A2", "A3"])
 
@@ -132,13 +133,10 @@ class BoardTest < Minitest::Test
 
   def test_it_can_create_an_array_of_rendered_cells
     expected = Array.new(16, ".")
-
     assert_equal expected, @board.render_chars
 
     @board.place(@cruiser, ["C2", "C3", "C4"])
-    expected[9..11] = ["S", "S", "S"]
-
-    assert_equal expected, @board.render_chars(true)
+    assert_equal 3, @board.render_chars(true).count("S")
   end
 
   def test_it_renders_as_dots_without_ships_revealed
@@ -185,14 +183,13 @@ class BoardTest < Minitest::Test
   def test_it_can_be_bigger_than_4x4
     board = Board.new(26, 26)
 
-    assert_equal 676, board.cells.count
+    assert_equal 676, board.cells.length
   end
 
   def test_it_can_be_smaller_than_4x4
     board = Board.new(1, 1)
 
-    assert_equal 1, board.cells.count
-    assert_instance_of Cell, board.cells["A1"]
+    assert_equal 1, board.cells.length
   end
 
 end

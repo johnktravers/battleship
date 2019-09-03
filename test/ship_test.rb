@@ -12,12 +12,9 @@ class ShipTest < Minitest::Test
     assert_instance_of Ship, @ship
   end
 
-  def test_it_attributes
+  def test_initialize
     assert_equal "Cruiser", @ship.name
     assert_equal 3, @ship.length
-  end
-
-  def test_health_starts_as_length_of_ship
     assert_equal 3, @ship.health
   end
 

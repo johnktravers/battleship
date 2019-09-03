@@ -21,12 +21,9 @@ class ComputerTest < Minitest::Test
     assert_instance_of Computer, @computer
   end
 
-  def test_it_has_a_board_and_ships
+  def test_initialize
     assert_equal @computer_board, @computer.computer_board
     assert_equal @total_ships, @computer.total_ships
-  end
-
-  def test_it_starts_with_no_ships_placed
     assert_equal [], @computer.ships_placed
   end
 

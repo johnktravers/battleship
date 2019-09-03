@@ -11,11 +11,14 @@ class Computer
 
   def select_random_coord
     @computer_board.cells.keys.sample
+    # copy of coordinates
+    # shift off sampled coordinates
   end
 
   def create_random_coord_array(ship)
     100.times do
       random_coord = select_random_coord
+      # sample horizontal or vertical
 
       random_array = create_random_row(ship, random_coord)
 
