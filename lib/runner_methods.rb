@@ -102,3 +102,29 @@ def present_board_to_player(player_board, player_ships)
     end
   end
 end
+
+def prompt_player_shot
+  print @game.prompt_player_shot
+  coord = gets.chomp.upcase
+  print "\n"
+
+  loop do
+    if @game.computer_board.valid_coordinate?(coord)
+      if !@game.player_shot_coords.include?(coord)
+        @game.computer_board.cells[coord].fire_upon
+        @game.player_shot_coords.push(coord)
+        system "clear"
+        print @game.display_player_result(coord)
+        break
+      else
+        print @game.repeated_coordinate
+        coord = gets.chomp.upcase
+        print "\n"
+      end
+    else
+      print @game.invalid_shot_coordinate
+      coord = gets.chomp.upcase
+      print "\n"
+    end
+  end
+end

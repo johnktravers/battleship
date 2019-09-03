@@ -1,13 +1,11 @@
 require './lib/ship'
 require './lib/cell'
 require './lib/board'
-require './lib/player'
 require './lib/computer'
 require './lib/game'
 require './lib/runner_methods'
 require 'numbers_and_words'
 require 'pry'
-
 
 loop do
   @game = Game.new
@@ -35,7 +33,6 @@ loop do
     player_ships.push(Ship.new(ship.name, ship.length))
   end
 
-  player = Player.new(player_board, player_ships)
   present_board_to_player(player_board, player_ships)
 
   squares_occupied = ships_placed.sum { |ship| ship.length }
@@ -43,15 +40,14 @@ loop do
   until @game.computer_ships_sunk?(squares_occupied) || @game.player_ships_sunk?(squares_occupied)
     print @game.display_boards
 
-    @game.prompt_player_shot
-    # check if game is over
-    computer_fire_upon_coord
+    prompt_player_shot
+    print @game.computer_fire_upon_coord(computer)
   end
 
-  @game.display_boards
-  @game.game_over(squares_occupied)
+  print @game.display_boards
+  print @game.game_over(squares_occupied)
+
+  print @game.press_enter
+  gets
+  system "clear"
 end
-
-
-
-# Helper methods

@@ -3,7 +3,6 @@ class Game
               :player_board,
               :ship_attrs,
               :total_ships,
-              :squares_occupied,
               :computer_shot_coords,
               :player_shot_coords,
               :dimensions,
@@ -17,6 +16,7 @@ class Game
     @computer_shot_coords = []
     @player_shot_coords = []
     @dimensions = []
+    @longest_side = nil
   end
 
   def main_menu_prompt
@@ -90,6 +90,7 @@ class Game
     player_ships.each do |ship|
       message.concat("  The #{ship.name} is #{ship.length.to_words} units long.\n")
     end
+
     message + "\n"
   end
 
@@ -102,7 +103,6 @@ class Game
     "Those are invalid coordinates. Please try again:\n> "
   end
 
-
   def display_boards
     num_equal_signs = [(@computer_board.render.length / (@dimensions[0] + 1) - 14) / 2 - 1, 13].max
 
@@ -114,19 +114,11 @@ class Game
     "\n"
   end
 
-
-
-
-
-
-
-
-
-  def computer_fire_upon_coord
-    loop do
-      coord = @computer.select_random_coord
+  def computer_fire_upon_coord(computer)
+    coord = loop do
+      coord = computer.select_random_coord
       if !@computer_shot_coords.include?(coord)
-        break
+        break coord
       end
     end
 
@@ -137,64 +129,49 @@ class Game
 
   def display_computer_result(coord)
     if @player_board.cells[coord].render == "M"
-      print "My shot on #{coord} was a miss.\n"
+      "My shot on #{coord} was a miss.\n\n"
     elsif @player_board.cells[coord].render == "H"
-      print "My shot on #{coord} was a hit.\n"
+      "My shot on #{coord} was a hit.\n\n"
     else
-      print "My shot on #{coord} sunk your #{@player_board.cells[coord].ship.name}!\n"
+      "My shot on #{coord} sunk your #{@player_board.cells[coord].ship.name}!\n\n"
     end
-
-    print "\n"
   end
 
   def prompt_player_shot
-    coord = @player.fire_upon_coord
+    "Enter the coordinate for your shot:\n> "
+  end
 
-    loop do
-      if @computer_board.valid_coordinate?(coord)
-        if !@player_shot_coords.include?(coord)
-          @computer_board.cells[coord].fire_upon
-          @player_shot_coords.push(coord)
-          system "clear"
-          display_player_result(coord)
-          break
-        else
-          print "That coordinate has already been fired upon.\n" +
-                "Please enter a different coordinate:\n> "
-          coord = gets.chomp.upcase
-          print "\n"
-        end
-      else
-        print "Please enter a valid coordinate:\n> "
-        coord = gets.chomp.upcase
-        print "\n"
-      end
-    end
+  def repeated_coordinate
+    "That coordinate has already been fired upon.\n" +
+    "Please enter a different coordinate:\n> "
+  end
+
+  def invalid_shot_coordinate
+    "Please enter a valid coordinate:\n> "
   end
 
   def display_player_result(coord)
     if @computer_board.cells[coord].render == "M"
-      print "Your shot on #{coord} was a miss.\n"
+      "Your shot on #{coord} was a miss.\n"
     elsif @computer_board.cells[coord].render == "H"
-      print "Your shot on #{coord} was a hit.\n"
+      "Your shot on #{coord} was a hit.\n"
     else
-      print "Your shot on #{coord} sunk my #{@computer_board.cells[coord].ship.name}!\n"
+      "Your shot on #{coord} sunk my #{@computer_board.cells[coord].ship.name}!\n"
     end
   end
 
-
   def game_over(squares_occupied)
     if computer_ships_sunk?(squares_occupied) && player_ships_sunk?(squares_occupied)
-      puts "It's a tie!\n\n"
+      "It's a tie!\n\n"
     elsif player_ships_sunk?(squares_occupied)
-      puts "I won!\n\n"
+      "I won!\n\n"
     else
-      puts "You won!\n\n"
+      "You won!\n\n"
     end
+  end
 
-    print "Press Enter key to continue:\n> "
-    gets
-    system "clear"
+  def press_enter
+    "Press Enter key to continue:\n> "
   end
 
 
