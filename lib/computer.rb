@@ -18,20 +18,14 @@ class Computer
   def create_random_coord_array(ship)
     100.times do
       random_coord = select_random_coord
-      # sample horizontal or vertical
 
-      random_array = create_random_row(ship, random_coord)
+      random_array = [create_random_row(ship, random_coord),
+                      create_random_column(ship, random_coord)].sample
 
-      if @computer_board.valid_placement?(ship, random_array)
-        break random_array
-      end
-
-      random_array = create_random_column(ship, random_coord)
 
       if @computer_board.valid_placement?(ship, random_array)
         break random_array
       end
-
     end
   end
 
